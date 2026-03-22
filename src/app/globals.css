@@ -1,0 +1,138 @@
+@import "tailwindcss";
+@import "@tailwindcss/typography";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* ── Base (Dark Canvas) ── */
+  --bg-primary: #0A0B0F;
+  --bg-secondary: #12131A;
+  --bg-tertiary: #1A1B26;
+  --bg-hover: #1F2133;
+  --bg-active: #252740;
+
+  /* ── Borders & Dividers ── */
+  --border-subtle: #1E2030;
+  --border-default: #2A2D42;
+  --border-strong: #3D4166;
+
+  /* ── Text ── */
+  --text-primary: #E8E9ED;
+  --text-secondary: #9496A8;
+  --text-tertiary: #5E6078;
+  --text-inverse: #0A0B0F;
+
+  /* ── Signature Accent: Electric Teal ── */
+  --accent-primary: #00D4AA;
+  --accent-hover: #00E8BC;
+  --accent-muted: #00D4AA1A;
+  --accent-glow: #00D4AA33;
+
+  /* ── Status Colors ── */
+  --status-green: #34D399;
+  --status-yellow: #FBBF24;
+  --status-red: #F87171;
+  --status-blue: #60A5FA;
+
+  /* ── Visibility Score Gradient ── */
+  --score-low: #F87171;
+  --score-mid: #FBBF24;
+  --score-high: #34D399;
+  --score-excellent: #00D4AA;
+
+  /* ── Platform Colors ── */
+  --platform-chatgpt: #10A37F;
+  --platform-perplexity: #20808D;
+  --platform-google: #4285F4;
+  --platform-gemini: #8E75B2;
+  --platform-claude: #D4A574;
+
+  /* ── Surfaces ── */
+  --glass: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.06);
+
+  /* ── Typography ── */
+  --font-display: 'Geist', 'SF Pro Display', -apple-system, sans-serif;
+  --font-body: 'Geist Mono', 'JetBrains Mono', 'SF Mono', monospace;
+
+  /* ── Type Scale ── */
+  --text-xs: 0.75rem;
+  --text-sm: 0.8125rem;
+  --text-base: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.5rem;
+  --text-2xl: 2rem;
+  --text-3xl: 2.5rem;
+  --text-4xl: 3.5rem;
+
+  /* ── Line Heights ── */
+  --leading-tight: 1.2;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.7;
+
+  /* ── Font Weights ── */
+  --weight-normal: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  /* ── Transitions ── */
+  --transition-fast: 0.1s ease;
+  --transition-normal: 0.2s ease;
+  --transition-slow: 0.3s ease;
+  --transition-data: 0.6s ease-out;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Mono for data contexts ── */
+.font-mono,
+[data-mono] {
+  font-family: var(--font-body);
+  letter-spacing: 0.02em;
+}
+
+/* ── Heading defaults ── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  line-height: var(--leading-tight);
+  letter-spacing: -0.01em;
+}
+
+/* ── Scrollbar styling ── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-default);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-strong);
+}
+
+/* ── Selection ── */
+::selection {
+  background: var(--accent-glow);
+  color: var(--text-primary);
+}
