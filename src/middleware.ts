@@ -10,12 +10,21 @@ function isPublicRoute(pathname: string): boolean {
 }
 
 export async function middleware(request: NextRequest) {
-  const { user, supabaseResponse } = await updateSession(request);
   const { pathname } = request.nextUrl;
+
+  let user = null;
+  let supabaseResponse = NextResponse.next({ request });
+
+  try {
+    const result = await updateSession(request);
+    user = result.user;
+    supabaseResponse = result.supabaseResponse;
+  } catch {
+    // If session refresh fails, treat as unauthenticated
+  }
 
   // Public routes — allow through
   if (isPublicRoute(pathname)) {
-    // Redirect authenticated users away from /login
     if (pathname === "/login" && user) {
       const url = request.nextUrl.clone();
       url.pathname = "/overview";
