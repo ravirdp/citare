@@ -96,6 +96,56 @@ Row Level Security (RLS) at database level. Agency users only see their clients.
 - Decision radius: Planned (city-wide) → Considered (local) → Impulse (proximity)
 - Revenue model: Agency base fee + per-client volume pricing. No setup fees.
 
+## Phase 0 — Complete (2026-03-22)
+
+Project scaffolding and foundation. All verified working.
+
+- **Git**: Initialized, pushed to `github.com/ravirdp/citare` (main branch)
+- **Next.js 16** + TypeScript strict + App Router + Tailwind CSS 4 + pnpm
+- **Database**: Drizzle schema with 15 tables, initial migration generated (`0000_boring_firebrand.sql`). Not yet pushed to Supabase.
+- **Design system**: Full Citare aesthetic (AESTHETIC.md) implemented in `globals.css` — dark canvas, Electric Teal accent, Geist fonts, CSS variables
+- **AI provider**: Interface + SimulationProvider + ProductionProvider stub in `src/lib/ai/`
+- **shadcn/ui**: Configured (`components.json`), no components installed yet
+- **Directory structure**: All 44 directories from ARCHITECTURE.md Section 2
+- **Env**: `.env.local` populated with Supabase, Upstash Redis, QStash credentials
+- **Verification**: `pnpm tsc --noEmit` (zero errors), `pnpm dev` (starts in ~360ms), `pnpm db:generate` (15 tables)
+
+## Phase 1 — In Progress (2026-03-23)
+
+Database, Auth & Google Data Ingestion.
+
+**Completed:**
+- **Database live**: All 15 tables pushed to Supabase via MCP migrations (tables + FK constraints + indexes)
+- **RLS policies**: Applied for all tables — super_admin full access, agency sees own clients, client sees own data. Helper functions: `get_user_role()`, `get_user_agency_id()`, `get_user_client_id()`
+- **Supabase Auth**: `@supabase/ssr` integrated with cookie-based sessions. Three client variants: server (`src/lib/supabase/server.ts`), browser (`src/lib/supabase/client.ts`), middleware (`src/lib/supabase/middleware.ts`)
+- **Auth middleware**: `src/middleware.ts` — session refresh, redirect unauthenticated to `/login`, public routes exempted
+- **Login page**: `src/app/(auth)/login/page.tsx` — email/password with Citare branding, Suspense-wrapped for `useSearchParams`
+- **OAuth callback**: `src/app/(auth)/callback/page.tsx`
+- **Google OAuth flow** (data ingestion, separate from login auth):
+  - `src/lib/integrations/google/oauth.ts` — auth URL generation, code exchange, token refresh, encrypt/decrypt
+  - `GET /api/auth/google?clientId=xxx` — initiates consent screen with Ads, GBP, SC, Analytics scopes
+  - `GET /api/auth/google/callback` — exchanges code, encrypts tokens, creates 4 `data_sources` rows per client
+- **Encryption**: `src/lib/utils/encryption.ts` — AES-256-GCM for OAuth token storage
+- **Integration template**: `src/lib/integrations/_template.ts` — `DataSourceIntegration` interface
+- **Four Google integrations** (all follow template pattern):
+  - `google/ads.ts` — campaigns, keywords, performance, geo targeting (via `google-ads-api`)
+  - `google/gbp.ts` — business info, locations, categories, hours (via `googleapis`)
+  - `google/search-console.ts` — queries, pages, devices, countries (via `googleapis`)
+  - `google/analytics.ts` — top pages, traffic sources, geo breakdown (via `googleapis`)
+- **Ingestion orchestrator**: `src/lib/integrations/orchestrator.ts` — parallel execution via `Promise.allSettled`, error isolation per source
+- **Ingestion API routes**: `POST /api/ingest/trigger`, `GET /api/ingest/status/[clientId]`
+- **Admin clients page**: `src/app/(admin)/clients/page.tsx` — lists clients with data source status, Connect Google + Trigger Ingestion buttons
+- **Overview page**: `src/app/(dashboard)/overview/page.tsx` — authenticated landing page
+- **React Query**: `src/app/providers.tsx` wrapping root layout
+- **Type definitions**: `src/types/database.ts`, `src/types/api.ts`, `src/types/integrations.ts`
+- **shadcn/ui components**: button, input, label, card installed
+- **Build**: `pnpm tsc --noEmit` zero errors, `pnpm build` succeeds, `pnpm dev` starts in ~500ms
+
+**Still needed to complete Phase 1:**
+- Vercel deployment verified (env vars set, auto-deploy on push)
+- Super admin user created in Supabase Auth + seeded in `users` table (script at `scripts/seed-admin.ts`)
+- End-to-end test: login → connect Google → trigger ingestion → verify raw data in Supabase
+
 ## Reference Documents
 
 - `citare-product-bible-v3.docx` — Complete product vision, 14 sections
