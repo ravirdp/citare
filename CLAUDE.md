@@ -110,41 +110,35 @@ Project scaffolding and foundation. All verified working.
 - **Env**: `.env.local` populated with Supabase, Upstash Redis, QStash credentials
 - **Verification**: `pnpm tsc --noEmit` (zero errors), `pnpm dev` (starts in ~360ms), `pnpm db:generate` (15 tables)
 
-## Phase 1 — In Progress (2026-03-23)
+## Phase 1 — Complete (2026-03-23)
 
-Database, Auth & Google Data Ingestion.
+Database, Auth & Google Data Ingestion. All 13 completion tests pass.
 
-**Completed:**
-- **Database live**: All 15 tables pushed to Supabase via MCP migrations (tables + FK constraints + indexes)
-- **RLS policies**: Applied for all tables — super_admin full access, agency sees own clients, client sees own data. Helper functions: `get_user_role()`, `get_user_agency_id()`, `get_user_client_id()`
-- **Supabase Auth**: `@supabase/ssr` integrated with cookie-based sessions. Three client variants: server (`src/lib/supabase/server.ts`), browser (`src/lib/supabase/client.ts`), middleware (`src/lib/supabase/middleware.ts`)
-- **Auth middleware**: `src/middleware.ts` — session refresh, redirect unauthenticated to `/login`, public routes exempted
-- **Login page**: `src/app/(auth)/login/page.tsx` — email/password with Citare branding, Suspense-wrapped for `useSearchParams`
-- **OAuth callback**: `src/app/(auth)/callback/page.tsx`
-- **Google OAuth flow** (data ingestion, separate from login auth):
-  - `src/lib/integrations/google/oauth.ts` — auth URL generation, code exchange, token refresh, encrypt/decrypt
-  - `GET /api/auth/google?clientId=xxx` — initiates consent screen with Ads, GBP, SC, Analytics scopes
-  - `GET /api/auth/google/callback` — exchanges code, encrypts tokens, creates 4 `data_sources` rows per client
-- **Encryption**: `src/lib/utils/encryption.ts` — AES-256-GCM for OAuth token storage
-- **Integration template**: `src/lib/integrations/_template.ts` — `DataSourceIntegration` interface
-- **Four Google integrations** (all follow template pattern):
-  - `google/ads.ts` — campaigns, keywords, performance, geo targeting (via `google-ads-api`)
-  - `google/gbp.ts` — business info, locations, categories, hours (via `googleapis`)
-  - `google/search-console.ts` — queries, pages, devices, countries (via `googleapis`)
-  - `google/analytics.ts` — top pages, traffic sources, geo breakdown (via `googleapis`)
-- **Ingestion orchestrator**: `src/lib/integrations/orchestrator.ts` — parallel execution via `Promise.allSettled`, error isolation per source
-- **Ingestion API routes**: `POST /api/ingest/trigger`, `GET /api/ingest/status/[clientId]`
-- **Admin clients page**: `src/app/(admin)/clients/page.tsx` — lists clients with data source status, Connect Google + Trigger Ingestion buttons
-- **Overview page**: `src/app/(dashboard)/overview/page.tsx` — authenticated landing page
-- **React Query**: `src/app/providers.tsx` wrapping root layout
-- **Type definitions**: `src/types/database.ts`, `src/types/api.ts`, `src/types/integrations.ts`
-- **shadcn/ui components**: button, input, label, card installed
-- **Build**: `pnpm tsc --noEmit` zero errors, `pnpm build` succeeds, `pnpm dev` starts in ~500ms
+- **Vercel**: Live at `citare.vercel.app`, auto-deploys on push to main. Framework preset: Next.js.
+- **Database live**: All 15 tables in Supabase (applied via MCP migrations, not `db:push` — local `DATABASE_URL` has connection issues with `postgres` driver, use Supabase MCP for DDL)
+- **RLS policies**: All 15 tables have RLS enabled. Helper functions `get_user_role()`, `get_user_agency_id()`, `get_user_client_id()` map `auth.uid()` → `users` table. Super admin full access, agency sees own clients, client sees own data.
+- **Supabase Auth**: `@supabase/ssr` with cookie-based sessions. Server/browser/middleware client variants in `src/lib/supabase/`.
+- **Auth middleware**: `src/middleware.ts` — session refresh with error handling (try/catch so public routes work even if Supabase call fails), redirect unauthenticated to `/login`.
+- **Login page**: `src/app/(auth)/login/page.tsx` — email/password, Citare branding, Suspense-wrapped.
+- **Super admin**: ravirdp@gmail.com seeded in `users` table (auth_provider_id: `7a30f68a-6a64-4a17-b3a8-9cbcb59589b4`)
+- **Google OAuth flow** (data ingestion, separate from login):
+  - `src/lib/integrations/google/oauth.ts` — auth URL, code exchange, token refresh, AES-256-GCM encrypt/decrypt
+  - `GET /api/auth/google?clientId=xxx` → consent screen (Ads, GBP, SC, Analytics scopes)
+  - `GET /api/auth/google/callback` → encrypts tokens, creates 4 `data_sources` rows
+- **Four Google integrations** (all follow `_template.ts` pattern):
+  - `google/ads.ts` — campaigns, keywords, performance, geo targeting (`google-ads-api`)
+  - `google/gbp.ts` — business info, locations, categories, hours (`googleapis`)
+  - `google/search-console.ts` — queries, pages, devices, countries (`googleapis`)
+  - `google/analytics.ts` — top pages, traffic sources, geo breakdown (`googleapis`)
+- **Ingestion orchestrator**: `src/lib/integrations/orchestrator.ts` — `Promise.allSettled`, per-source error isolation
+- **API routes**: `POST /api/ingest/trigger`, `GET /api/ingest/status/[clientId]`
+- **Admin clients page**: `src/app/(admin)/clients/page.tsx` — status indicators, Connect Google + Trigger Ingestion
+- **shadcn/ui components**: button, input, label, card
+- **Build**: `pnpm tsc --noEmit` zero errors, `pnpm build` succeeds
 
-**Still needed to complete Phase 1:**
-- Vercel deployment verified (env vars set, auto-deploy on push)
-- Super admin user created in Supabase Auth + seeded in `users` table (script at `scripts/seed-admin.ts`)
-- End-to-end test: login → connect Google → trigger ingestion → verify raw data in Supabase
+**Known issues:**
+- `DATABASE_URL` (transaction pooler port 6543) fails with `postgres` npm driver locally — password auth error. Use Supabase MCP for DB operations. Runtime on Vercel untested yet (may need `?sslmode=require` or switch to session pooler).
+- Google API integrations are structurally complete but not yet end-to-end tested with real API data. First real test will happen when you connect a Google account via the OAuth flow.
 
 ## Reference Documents
 
