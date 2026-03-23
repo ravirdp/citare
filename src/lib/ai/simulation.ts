@@ -3,12 +3,9 @@ import { existsSync } from "fs";
 import path from "path";
 import type {
   AIProvider,
-  RawClientData,
-  KnowledgeGraph,
   PresenceContent,
   MonitoringData,
   InsightReport,
-  DecisionRadiusMap,
   MultiLangContent,
   ProcessedResults,
   HealthReport,
@@ -17,6 +14,12 @@ import type {
   MonitoringQuery,
   MetaIntelligenceReport,
 } from "./provider";
+import type {
+  RawClientData,
+  KnowledgeGraphData,
+  KGService,
+  DecisionRadiusMap,
+} from "@/lib/knowledge-graph/types";
 
 const PROMPT_DIR = path.join(process.cwd(), "simulation", "prompts");
 const RESPONSE_DIR = path.join(process.cwd(), "simulation", "responses");
@@ -55,21 +58,21 @@ export class SimulationProvider implements AIProvider {
   strategist = {
     async synthesizeKnowledgeGraph(
       rawData: RawClientData
-    ): Promise<KnowledgeGraph> {
-      const promptId = `kg-synthesize-${Date.now()}`;
+    ): Promise<KnowledgeGraphData> {
+      const promptId = `kg-synthesize-${rawData.clientId}`;
       await writePrompt(promptId, {
         task: "synthesize_knowledge_graph",
         tier: "strategist",
         input: rawData,
       });
-      return waitForResponse<KnowledgeGraph>(promptId);
+      return waitForResponse<KnowledgeGraphData>(promptId);
     },
 
     async generatePresenceContent(
-      kg: KnowledgeGraph,
+      kg: KnowledgeGraphData,
       formats: string[]
     ): Promise<PresenceContent[]> {
-      const promptId = `presence-generate-${Date.now()}`;
+      const promptId = `presence-generate-${formats.join("-")}`;
       await writePrompt(promptId, {
         task: "generate_presence_content",
         tier: "strategist",
@@ -79,7 +82,7 @@ export class SimulationProvider implements AIProvider {
     },
 
     async generateInsightReport(
-      kg: KnowledgeGraph,
+      kg: KnowledgeGraphData,
       monitoringData: MonitoringData
     ): Promise<InsightReport> {
       const promptId = `insight-report-${Date.now()}`;
@@ -92,9 +95,9 @@ export class SimulationProvider implements AIProvider {
     },
 
     async classifyDecisionRadius(
-      services: unknown[]
+      services: KGService[]
     ): Promise<DecisionRadiusMap> {
-      const promptId = `decision-radius-${Date.now()}`;
+      const promptId = `decision-radius-${services.map((s) => s.id).join("-")}`;
       await writePrompt(promptId, {
         task: "classify_decision_radius",
         tier: "strategist",
@@ -107,7 +110,7 @@ export class SimulationProvider implements AIProvider {
       content: string,
       languages: string[]
     ): Promise<MultiLangContent> {
-      const promptId = `multilang-${Date.now()}`;
+      const promptId = `multilang-${languages.join("-")}`;
       await writePrompt(promptId, {
         task: "generate_multilang_content",
         tier: "strategist",

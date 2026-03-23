@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db/client";
-import { clients, dataSources } from "@/lib/db/schema";
+import { clients, dataSources, knowledgeGraphs, presenceDeployments } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { ClientsTable } from "./clients-table";
@@ -11,15 +11,18 @@ export default async function AdminClientsPage() {
 
   if (!user) redirect("/login");
 
-  // Fetch all clients with their data sources
+  // Fetch all clients with their data sources, KG status, and presence status
   const allClients = await db.select().from(clients);
 
   const clientsWithSources = await Promise.all(
     allClients.map(async (client) => {
-      const sources = await db
-        .select()
-        .from(dataSources)
-        .where(eq(dataSources.clientId, client.id));
+      const [sources, kgRows, presenceRows] = await Promise.all([
+        db.select().from(dataSources).where(eq(dataSources.clientId, client.id)),
+        db.select().from(knowledgeGraphs).where(eq(knowledgeGraphs.clientId, client.id)).limit(1),
+        db.select().from(presenceDeployments).where(eq(presenceDeployments.clientId, client.id)),
+      ]);
+
+      const kg = kgRows[0] ?? null;
 
       return {
         ...client,
@@ -28,6 +31,18 @@ export default async function AdminClientsPage() {
           sourceType: s.sourceType,
           status: s.status,
           lastSyncAt: s.lastSyncAt?.toISOString() ?? null,
+        })),
+        knowledgeGraph: kg
+          ? {
+              version: kg.version,
+              lastStrategistRun: kg.lastStrategistRun?.toISOString() ?? null,
+            }
+          : null,
+        presenceFormats: presenceRows.map((p) => ({
+          format: p.format,
+          status: p.status,
+          deploymentUrl: p.deploymentUrl,
+          lastDeployedAt: p.lastDeployedAt?.toISOString() ?? null,
         })),
       };
     })

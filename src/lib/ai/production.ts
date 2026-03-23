@@ -1,11 +1,8 @@
 import type {
   AIProvider,
-  RawClientData,
-  KnowledgeGraph,
   PresenceContent,
   MonitoringData,
   InsightReport,
-  DecisionRadiusMap,
   MultiLangContent,
   ProcessedResults,
   HealthReport,
@@ -14,6 +11,12 @@ import type {
   MonitoringQuery,
   MetaIntelligenceReport,
 } from "./provider";
+import type {
+  RawClientData,
+  KnowledgeGraphData,
+  KGService,
+  DecisionRadiusMap,
+} from "@/lib/knowledge-graph/types";
 
 /**
  * Production AI provider — makes real API calls to Anthropic, OpenAI, etc.
@@ -23,23 +26,23 @@ export class ProductionProvider implements AIProvider {
   strategist = {
     async synthesizeKnowledgeGraph(
       _rawData: RawClientData
-    ): Promise<KnowledgeGraph> {
+    ): Promise<KnowledgeGraphData> {
       throw new Error("ProductionProvider.strategist not yet implemented");
     },
     async generatePresenceContent(
-      _kg: KnowledgeGraph,
+      _kg: KnowledgeGraphData,
       _formats: string[]
     ): Promise<PresenceContent[]> {
       throw new Error("ProductionProvider.strategist not yet implemented");
     },
     async generateInsightReport(
-      _kg: KnowledgeGraph,
+      _kg: KnowledgeGraphData,
       _monitoringData: MonitoringData
     ): Promise<InsightReport> {
       throw new Error("ProductionProvider.strategist not yet implemented");
     },
     async classifyDecisionRadius(
-      _services: unknown[]
+      _services: KGService[]
     ): Promise<DecisionRadiusMap> {
       throw new Error("ProductionProvider.strategist not yet implemented");
     },

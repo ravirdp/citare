@@ -7,19 +7,25 @@
  *   - "production" → ProductionProvider (real API calls)
  */
 
-// ── Shared types (slim placeholders — flesh out as features are built) ──
+// ── Core types (re-exported from knowledge-graph/types.ts) ──
 
-export interface RawClientData {
-  clientId: string;
-  sources: Record<string, unknown>;
-}
+export type {
+  RawClientData,
+  KnowledgeGraphData,
+  KGService,
+  KGProduct,
+  DecisionRadiusMap,
+  MultiLangObject,
+} from "@/lib/knowledge-graph/types";
 
-export interface KnowledgeGraph {
-  businessProfile: Record<string, unknown>;
-  services: unknown[];
-  products: unknown[];
-  competitors: unknown[];
-}
+import type {
+  RawClientData as _RawClientData,
+  KnowledgeGraphData as _KnowledgeGraphData,
+  KGService as _KGService,
+  DecisionRadiusMap as _DecisionRadiusMap,
+} from "@/lib/knowledge-graph/types";
+
+// ── Shared types ──
 
 export interface PresenceContent {
   format: string;
@@ -35,10 +41,6 @@ export interface MonitoringData {
 export interface InsightReport {
   summary: string;
   recommendations: unknown[];
-}
-
-export interface DecisionRadiusMap {
-  [serviceId: string]: "planned" | "considered" | "impulse";
 }
 
 export interface MultiLangContent {
@@ -83,18 +85,18 @@ export interface MetaIntelligenceReport {
 
 export interface AIProvider {
   strategist: {
-    synthesizeKnowledgeGraph(rawData: RawClientData): Promise<KnowledgeGraph>;
+    synthesizeKnowledgeGraph(rawData: _RawClientData): Promise<_KnowledgeGraphData>;
     generatePresenceContent(
-      kg: KnowledgeGraph,
+      kg: _KnowledgeGraphData,
       formats: string[]
     ): Promise<PresenceContent[]>;
     generateInsightReport(
-      kg: KnowledgeGraph,
+      kg: _KnowledgeGraphData,
       monitoringData: MonitoringData
     ): Promise<InsightReport>;
     classifyDecisionRadius(
-      services: unknown[]
-    ): Promise<DecisionRadiusMap>;
+      services: _KGService[]
+    ): Promise<_DecisionRadiusMap>;
     generateMultiLangContent(
       content: string,
       languages: string[]

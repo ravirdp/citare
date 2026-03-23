@@ -16,6 +16,16 @@ interface ClientWithSources {
     status: string | null;
     lastSyncAt: string | null;
   }>;
+  knowledgeGraph: {
+    version: number | null;
+    lastStrategistRun: string | null;
+  } | null;
+  presenceFormats: Array<{
+    format: string;
+    status: string | null;
+    deploymentUrl: string | null;
+    lastDeployedAt: string | null;
+  }>;
 }
 
 const STATUS_COLORS: Record<string, string> = {
@@ -29,6 +39,9 @@ const STATUS_COLORS: Record<string, string> = {
 
 export function ClientsTable({ clients }: { clients: ClientWithSources[] }) {
   const [ingesting, setIngesting] = useState<string | null>(null);
+  const [synthesizing, setSynthesizing] = useState<string | null>(null);
+  const [generating, setGenerating] = useState<string | null>(null);
+  const [deploying, setDeploying] = useState<string | null>(null);
 
   async function handleConnect(clientId: string) {
     window.location.href = `/api/auth/google?clientId=${clientId}`;
@@ -52,6 +65,67 @@ export function ClientsTable({ clients }: { clients: ClientWithSources[] }) {
       alert(`Error: ${err}`);
     } finally {
       setIngesting(null);
+    }
+  }
+
+  async function handleSynthesize(clientId: string) {
+    setSynthesizing(clientId);
+    try {
+      const res = await fetch(`/api/kg/${clientId}/synthesize`, {
+        method: "POST",
+      });
+      const data = await res.json();
+      if (res.status === 202) {
+        alert(`Awaiting simulation: ${data.promptPath}`);
+      } else if (data.status === "created" || data.status === "updated") {
+        window.location.reload();
+      } else {
+        alert(`Synthesis failed: ${data.error}`);
+      }
+    } catch (err) {
+      alert(`Error: ${err}`);
+    } finally {
+      setSynthesizing(null);
+    }
+  }
+
+  async function handleGenerate(clientId: string) {
+    setGenerating(clientId);
+    try {
+      const res = await fetch(`/api/presence/${clientId}/generate`, {
+        method: "POST",
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert(`Generated: ${data.summary.generated}, Unchanged: ${data.summary.unchanged}, Errors: ${data.summary.errors}`);
+        window.location.reload();
+      } else {
+        alert(`Generation failed: ${data.error}`);
+      }
+    } catch (err) {
+      alert(`Error: ${err}`);
+    } finally {
+      setGenerating(null);
+    }
+  }
+
+  async function handleDeploy(clientId: string) {
+    setDeploying(clientId);
+    try {
+      const res = await fetch(`/api/presence/${clientId}/deploy`, {
+        method: "POST",
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert(`Deployed: ${data.deployed.join(", ")}`);
+        window.location.reload();
+      } else {
+        alert(`Deploy failed: ${data.error}`);
+      }
+    } catch (err) {
+      alert(`Error: ${err}`);
+    } finally {
+      setDeploying(null);
     }
   }
 
@@ -103,7 +177,7 @@ export function ClientsTable({ clients }: { clients: ClientWithSources[] }) {
                   {client.slug} · {client.businessType}
                 </p>
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <Button
                   variant="outline"
                   size="sm"
@@ -133,6 +207,61 @@ export function ClientsTable({ clients }: { clients: ClientWithSources[] }) {
                   {ingesting === client.id
                     ? "Ingesting..."
                     : "Trigger Ingestion"}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleSynthesize(client.id)}
+                  disabled={
+                    synthesizing === client.id ||
+                    client.dataSources.length === 0
+                  }
+                  className="border text-[length:var(--text-sm)]"
+                  style={{
+                    borderColor: "var(--border-default)",
+                    color: "var(--text-primary)",
+                    background: "transparent",
+                  }}
+                >
+                  {synthesizing === client.id
+                    ? "Synthesizing..."
+                    : "Synthesize KG"}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleGenerate(client.id)}
+                  disabled={
+                    generating === client.id ||
+                    !client.knowledgeGraph
+                  }
+                  className="border text-[length:var(--text-sm)]"
+                  style={{
+                    borderColor: "var(--border-default)",
+                    color: "var(--text-primary)",
+                    background: "transparent",
+                  }}
+                >
+                  {generating === client.id
+                    ? "Generating..."
+                    : "Generate Presence"}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleDeploy(client.id)}
+                  disabled={
+                    deploying === client.id ||
+                    client.presenceFormats.length === 0
+                  }
+                  className="border text-[length:var(--text-sm)]"
+                  style={{
+                    borderColor: "var(--border-default)",
+                    color: "var(--text-primary)",
+                    background: "transparent",
+                  }}
+                >
+                  {deploying === client.id ? "Deploying..." : "Deploy"}
                 </Button>
               </div>
             </div>
@@ -180,6 +309,56 @@ export function ClientsTable({ clients }: { clients: ClientWithSources[] }) {
                       {ds.status}
                     </span>
                   </div>
+                ))}
+              </div>
+            )}
+
+            {/* KG Status */}
+            {client.knowledgeGraph && (
+              <div
+                className="mt-3 flex items-center gap-2 text-[length:var(--text-xs)]"
+                style={{ color: "var(--text-secondary)" }}
+              >
+                <span
+                  className="inline-block h-2 w-2 rounded-full"
+                  style={{ background: "var(--status-green)" }}
+                />
+                KG v{client.knowledgeGraph.version}
+                {client.knowledgeGraph.lastStrategistRun && (
+                  <span style={{ color: "var(--text-tertiary)" }}>
+                    · Last run:{" "}
+                    {new Date(client.knowledgeGraph.lastStrategistRun).toLocaleDateString()}
+                  </span>
+                )}
+              </div>
+            )}
+
+            {/* Presence Status */}
+            {client.presenceFormats.length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-2">
+                {client.presenceFormats.map((pf) => (
+                  <span
+                    key={pf.format}
+                    className="flex items-center gap-1.5 rounded px-2 py-0.5 text-[length:var(--text-xs)]"
+                    style={{
+                      background: "var(--bg-tertiary)",
+                      border: "1px solid var(--border-subtle)",
+                      color: "var(--text-secondary)",
+                    }}
+                  >
+                    <span
+                      className="inline-block h-1.5 w-1.5 rounded-full"
+                      style={{
+                        background:
+                          pf.status === "deployed"
+                            ? "var(--status-green)"
+                            : pf.status === "draft"
+                              ? "var(--status-yellow)"
+                              : "var(--text-tertiary)",
+                      }}
+                    />
+                    {pf.format.replace("_", " ")}
+                  </span>
                 ))}
               </div>
             )}

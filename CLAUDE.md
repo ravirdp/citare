@@ -140,6 +140,45 @@ Database, Auth & Google Data Ingestion. All 13 completion tests pass.
 - `DATABASE_URL` (transaction pooler port 6543) fails with `postgres` npm driver locally — password auth error. Use Supabase MCP for DB operations. Runtime on Vercel untested yet (may need `?sslmode=require` or switch to session pooler).
 - Google API integrations are structurally complete but not yet end-to-end tested with real API data. First real test will happen when you connect a Google account via the OAuth flow.
 
+## Phase 2 — Complete (2026-03-23)
+
+Knowledge Graph & Presence Layer. All 12 completion tests pass.
+
+- **Test data seeded**: 3 test businesses (Clinique Bangalore, Leverage Edu, KR Packers Jaipur) with 12 data_sources via Supabase MCP. Script: `scripts/seed-data/seed.ts`.
+- **Knowledge Graph types**: `src/lib/knowledge-graph/types.ts` — full interfaces (BusinessProfile, KGService, KGProduct, KGCompetitor, ConfidenceScores, Conflict, DecisionRadiusMap, etc.)
+- **KG database operations**: `src/lib/knowledge-graph/queries.ts` (reads), `builder.ts` (create/update/rollback with atomic `db.transaction()` versioning), `synthesize.ts` (orchestration)
+- **AI provider types updated**: `src/lib/ai/provider.ts` — placeholder `unknown[]` types replaced with real KG types from `knowledge-graph/types.ts`
+- **Simulation mode**: Deterministic prompt IDs (`kg-synthesize-{clientId}` instead of `Date.now()`). SimulationProvider writes prompts, developer processes via Claude Max, places response files.
+- **Strategist prompts**:
+  - `src/lib/ai/prompts/strategist/synthesize-kg.ts` — KG synthesis from raw Google data
+  - `src/lib/ai/prompts/strategist/classify-decision-radius.ts` — planned/considered/impulse classification
+  - `src/lib/ai/prompts/strategist/multi-lang.ts` — English + Hindi + Hinglish (NOT translation)
+  - `src/lib/ai/prompts/strategist/generate-presence.ts` — presence content from KG
+  - Review files: `simulation/prompts/REVIEW-*.md` for manual prompt iteration
+- **KG API routes**: GET/PATCH `/api/kg/:clientId`, GET `/api/kg/:clientId/history`, POST `/api/kg/:clientId/rollback/:version`, POST `/api/kg/:clientId/synthesize`
+- **Five presence generators** (all with defensive null guards for incomplete KG data):
+  - `src/lib/presence/json-ld.ts` — Schema.org LocalBusiness JSON-LD (90%+ properties)
+  - `src/lib/presence/llms-txt.ts` — structured plain text for LLM consumption
+  - `src/lib/presence/faq.ts` — FAQ page with FAQPage schema markup
+  - `src/lib/presence/markdown.ts` — comprehensive heading-structured markdown
+  - `src/lib/presence/product-feed.ts` — JSON product/service feed
+- **Presence orchestrator**: `src/lib/presence/orchestrator.ts` — SHA-256 content hashing, change detection, `Promise.allSettled` error isolation
+- **Presence API routes**: POST `/api/presence/:clientId/generate`, POST `/api/presence/:clientId/deploy`, GET `/api/presence/:clientId/health`
+- **Public presence routes** (unauthenticated, middleware allows `/presence/` prefix):
+  - `/presence/:slug/json-ld` — `application/ld+json`, 24hr CDN cache
+  - `/presence/:slug/llms.txt` — `text/plain`
+  - `/presence/:slug/about` — rendered markdown page with embedded JSON-LD
+  - `/presence/:slug/faq` — FAQ page with expandable details
+  - `/presence/:slug/products` — JSON product feed
+- **KG event system**: `src/lib/knowledge-graph/events.ts` — lightweight handler registration (migrates to Redis streams in Phase 3)
+- **Admin UI updated**: Synthesize KG / Generate Presence / Deploy buttons, KG version indicator, presence format status dots
+- **Build**: `pnpm tsc --noEmit` zero errors, `pnpm build` succeeds (requires `NODE_OPTIONS="--max-old-space-size=4096"` on dev machine)
+
+**Known issues:**
+- `pnpm build` OOMs without `NODE_OPTIONS="--max-old-space-size=4096"` on the 8GB dev machine. Works fine on Vercel.
+- Next.js 16 warns about deprecated `middleware` file convention — should migrate to `proxy` eventually but not blocking.
+- Presence generators use defensive null guards because KG JSONB from simulation mode may have incomplete fields. This is by design — generators handle partial data gracefully.
+
 ## Reference Documents
 
 - `citare-product-bible-v3.docx` — Complete product vision, 14 sections
