@@ -5,17 +5,12 @@ import { useQuery } from "@tanstack/react-query";
 import { useClientId } from "@/components/dashboard/client-selector";
 import { Badge } from "@/components/ui/badge";
 
-interface PlatformScore {
-  platform: string;
-  score: number;
-}
-
 interface ServiceItem {
-  id: string;
-  name: string;
-  type: "service" | "product";
-  visibilityScore: number;
-  platformScores: PlatformScore[];
+  itemId: string;
+  itemName: string;
+  itemType: "service" | "product";
+  score: number;
+  platforms: Record<string, number>;
 }
 
 const PLATFORM_COLORS: Record<string, string> = {
@@ -40,7 +35,9 @@ function ServicesContent() {
     queryFn: async () => {
       const res = await fetch(`/api/dashboard/${clientId}/items`);
       if (!res.ok) throw new Error("Failed to fetch items");
-      return res.json();
+      const json = await res.json();
+      const items = json.items ?? json;
+      return Array.isArray(items) ? items : [];
     },
     enabled: !!clientId,
   });
@@ -80,22 +77,22 @@ function ServicesContent() {
   return (
     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 16 }}>
       {data.map((item) => (
-        <div key={item.id} style={{ background: "var(--bg-secondary)", border: "1px solid var(--border-subtle)", borderRadius: 12, padding: 20 }}>
+        <div key={item.itemId} style={{ background: "var(--bg-secondary)", border: "1px solid var(--border-subtle)", borderRadius: 12, padding: 20 }}>
           <div className="flex items-center justify-between" style={{ marginBottom: 12 }}>
             <span style={{ color: "var(--text-primary)", fontSize: "var(--text-md)", fontWeight: 600 }}>
-              {item.name}
+              {item.itemName}
             </span>
-            <Badge variant="outline">{item.type}</Badge>
+            <Badge variant="outline">{item.itemType}</Badge>
           </div>
-          <div style={{ fontFamily: "var(--font-body)", fontSize: 24, fontWeight: 700, color: scoreColor(item.visibilityScore), marginBottom: 12 }}>
-            {item.visibilityScore}
+          <div style={{ fontFamily: "var(--font-body)", fontSize: 24, fontWeight: 700, color: scoreColor(item.score ?? 0), marginBottom: 12 }}>
+            {Math.round(item.score ?? 0)}
           </div>
           <div className="flex flex-wrap gap-2">
-            {item.platformScores.map((ps) => (
-              <div key={ps.platform} className="flex items-center gap-1">
-                <span style={{ width: 8, height: 8, borderRadius: "50%", background: PLATFORM_COLORS[ps.platform] ?? "var(--text-tertiary)", display: "inline-block" }} />
+            {Object.entries(item.platforms ?? {}).map(([platform, score]) => (
+              <div key={platform} className="flex items-center gap-1">
+                <span style={{ width: 8, height: 8, borderRadius: "50%", background: PLATFORM_COLORS[platform] ?? "var(--text-tertiary)", display: "inline-block" }} />
                 <span style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-xs)", color: "var(--text-secondary)" }}>
-                  {ps.score}
+                  {Math.round(score as number)}
                 </span>
               </div>
             ))}

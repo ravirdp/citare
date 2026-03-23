@@ -11,7 +11,8 @@ interface CompetitorTableProps {
   competitors: Competitor[];
 }
 
-export function CompetitorTable({ competitors }: CompetitorTableProps) {
+export function CompetitorTable({ competitors: rawCompetitors }: CompetitorTableProps) {
+  const competitors = Array.isArray(rawCompetitors) ? rawCompetitors : [];
   if (competitors.length === 0) {
     return (
       <div

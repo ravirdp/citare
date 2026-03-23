@@ -12,8 +12,8 @@ interface MonitorResult {
   query: string;
   mentioned: boolean;
   position: number | null;
-  accuracy: "high" | "medium" | "low" | null;
-  createdAt: string;
+  accurate: boolean | null;
+  queriedAt: string;
 }
 
 const PLATFORM_COLORS: Record<string, string> = {
@@ -22,12 +22,6 @@ const PLATFORM_COLORS: Record<string, string> = {
   gemini: "var(--platform-gemini, #4285f4)",
   claude: "var(--platform-claude, #d97706)",
   aio: "var(--platform-aio, #ea4335)",
-};
-
-const ACCURACY_COLORS: Record<string, string> = {
-  high: "var(--status-green)",
-  medium: "var(--status-yellow)",
-  low: "var(--status-red)",
 };
 
 function timeAgo(dateStr: string): string {
@@ -49,7 +43,21 @@ function MonitoringContent() {
     queryFn: async () => {
       const res = await fetch(`/api/monitor/results/${clientId}?limit=100`);
       if (!res.ok) throw new Error("Failed to fetch results");
-      return res.json();
+      const json = await res.json();
+      const raw = json.results ?? json;
+      if (!Array.isArray(raw)) return [];
+      return raw.map((r: Record<string, unknown>) => {
+        const result = (r.result ?? r) as Record<string, unknown>;
+        return {
+          id: result.id as string,
+          platform: result.platform as string,
+          query: (r.queryText ?? "") as string,
+          mentioned: (result.clientMentioned ?? false) as boolean,
+          position: (result.clientPosition ?? null) as number | null,
+          accurate: (result.informationAccurate ?? null) as boolean | null,
+          queriedAt: (result.queriedAt ?? "") as string,
+        };
+      });
     },
     enabled: !!clientId,
   });
@@ -135,14 +143,14 @@ function MonitoringContent() {
                   {r.position != null ? r.position : "\u2014"}
                 </TableCell>
                 <TableCell>
-                  {r.accuracy ? (
-                    <span style={{ width: 8, height: 8, borderRadius: "50%", background: ACCURACY_COLORS[r.accuracy] ?? "var(--text-tertiary)", display: "inline-block" }} />
+                  {r.accurate != null ? (
+                    <span style={{ width: 8, height: 8, borderRadius: "50%", background: r.accurate ? "var(--status-green)" : "var(--status-red)", display: "inline-block" }} />
                   ) : (
                     <span style={{ color: "var(--text-tertiary)" }}>{"\u2014"}</span>
                   )}
                 </TableCell>
                 <TableCell style={{ fontFamily: "var(--font-body)", color: "var(--text-secondary)", fontSize: "var(--text-xs)" }}>
-                  {timeAgo(r.createdAt)}
+                  {r.queriedAt ? timeAgo(r.queriedAt) : "\u2014"}
                 </TableCell>
               </TableRow>
             ))}

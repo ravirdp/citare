@@ -12,10 +12,10 @@ import { CompetitorTable } from "@/components/dashboard/competitor-table";
 interface OverviewData {
   visibilityScore: number;
   queriesMonitored: number;
-  aiSearchValue: number;
+  aiSearchValueInr: number;
   competitorsTracked: number;
-  platformScores: Record<string, number>;
-  trend: Array<{ date: string; score: number }>;
+  platformBreakdown: Record<string, number>;
+  trendData: Array<{ date: string; score: number }>;
   competitors: Array<{
     name: string;
     totalMentions: number;
@@ -24,7 +24,8 @@ interface OverviewData {
   }>;
 }
 
-function formatIndianNumber(num: number): string {
+function formatIndianNumber(num: number | null | undefined): string {
+  if (num == null || isNaN(num)) return "0";
   const str = num.toString();
   if (str.length <= 3) return str;
   let lastThree = str.slice(-3);
@@ -88,9 +89,9 @@ function OverviewContent() {
 
   const isEmpty =
     !data ||
-    (data.visibilityScore === 0 &&
-      data.queriesMonitored === 0 &&
-      data.aiSearchValue === 0);
+    ((data.visibilityScore ?? 0) === 0 &&
+      (data.queriesMonitored ?? 0) === 0 &&
+      (data.aiSearchValueInr ?? 0) === 0);
 
   if (isEmpty) {
     return (
@@ -131,17 +132,17 @@ function OverviewContent() {
             alignItems: "center",
           }}
         >
-          <VisibilityRing score={data.visibilityScore} />
+          <VisibilityRing score={data.visibilityScore ?? 0} />
         </div>
-        <MetricCard label="Queries Monitored" value={data.queriesMonitored} />
+        <MetricCard label="Queries Monitored" value={data.queriesMonitored ?? 0} />
         <MetricCard
           label="AI Search Value"
-          value={`\u20B9${formatIndianNumber(data.aiSearchValue)}`}
+          value={`\u20B9${formatIndianNumber(data.aiSearchValueInr)}`}
           valueColor="var(--accent-primary)"
         />
         <MetricCard
           label="Competitors Tracked"
-          value={data.competitorsTracked}
+          value={data.competitorsTracked ?? 0}
         />
       </div>
 
@@ -171,7 +172,7 @@ function OverviewContent() {
           >
             Platform Breakdown
           </h3>
-          <PlatformBar scores={data.platformScores} />
+          <PlatformBar scores={data.platformBreakdown ?? {}} />
         </div>
         <div
           style={{
@@ -191,7 +192,7 @@ function OverviewContent() {
           >
             Visibility Trend
           </h3>
-          <TrendChart data={data.trend} />
+          <TrendChart data={data.trendData ?? []} />
         </div>
       </div>
 
@@ -214,7 +215,7 @@ function OverviewContent() {
         >
           Competitor Comparison
         </h3>
-        <CompetitorTable competitors={data.competitors} />
+        <CompetitorTable competitors={data.competitors ?? []} />
       </div>
     </div>
   );

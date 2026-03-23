@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { LayoutDashboard, Layers, Users, Activity } from "lucide-react";
 import { ClientSelector } from "./client-selector";
@@ -19,6 +19,9 @@ const NAV_ITEMS = [
 
 export function Sidebar({ clients }: SidebarProps) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const clientIdParam = searchParams.get("clientId");
+  const queryString = clientIdParam ? `?clientId=${clientIdParam}` : "";
 
   return (
     <aside
@@ -79,7 +82,7 @@ export function Sidebar({ clients }: SidebarProps) {
           return (
             <Link
               key={item.href}
-              href={item.href}
+              href={`${item.href}${queryString}`}
               style={{
                 display: "flex",
                 alignItems: "center",

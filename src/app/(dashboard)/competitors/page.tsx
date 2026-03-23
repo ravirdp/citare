@@ -20,7 +20,9 @@ function CompetitorsContent() {
     queryFn: async () => {
       const res = await fetch(`/api/dashboard/${clientId}/competitors`);
       if (!res.ok) throw new Error("Failed to fetch competitors");
-      return res.json();
+      const json = await res.json();
+      const competitors = json.competitors ?? json;
+      return Array.isArray(competitors) ? competitors : [];
     },
     enabled: !!clientId,
   });
