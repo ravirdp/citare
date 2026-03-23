@@ -42,6 +42,9 @@ export function ClientsTable({ clients }: { clients: ClientWithSources[] }) {
   const [synthesizing, setSynthesizing] = useState<string | null>(null);
   const [generating, setGenerating] = useState<string | null>(null);
   const [deploying, setDeploying] = useState<string | null>(null);
+  const [generatingQueries, setGeneratingQueries] = useState<string | null>(null);
+  const [runningMonitoring, setRunningMonitoring] = useState<string | null>(null);
+  const [computingScores, setComputingScores] = useState<string | null>(null);
 
   async function handleConnect(clientId: string) {
     window.location.href = `/api/auth/google?clientId=${clientId}`;
@@ -126,6 +129,46 @@ export function ClientsTable({ clients }: { clients: ClientWithSources[] }) {
       alert(`Error: ${err}`);
     } finally {
       setDeploying(null);
+    }
+  }
+
+  async function handleGenerateQueries(clientId: string) {
+    setGeneratingQueries(clientId);
+    try {
+      const res = await fetch(`/api/monitor/queries/${clientId}`, { method: "POST" });
+      const data = await res.json();
+      if (data.success) {
+        alert(`Generated ${data.generated} queries`);
+        window.location.reload();
+      } else {
+        alert(`Failed: ${data.error}`);
+      }
+    } catch (err) {
+      alert(`Error: ${err}`);
+    } finally {
+      setGeneratingQueries(null);
+    }
+  }
+
+  async function handleRunMonitoring(clientId: string) {
+    setRunningMonitoring(clientId);
+    try {
+      const res = await fetch(`/api/monitor/run/${clientId}`, { method: "POST" });
+      const data = await res.json();
+      if (data.success) {
+        alert(`Monitoring complete: ${data.resultsStored} results stored`);
+        // Auto-compute scores
+        setComputingScores(clientId);
+        await fetch(`/api/monitor/scores/${clientId}`, { method: "POST" });
+        setComputingScores(null);
+        window.location.reload();
+      } else {
+        alert(`Failed: ${data.error}`);
+      }
+    } catch (err) {
+      alert(`Error: ${err}`);
+    } finally {
+      setRunningMonitoring(null);
     }
   }
 
@@ -262,6 +305,44 @@ export function ClientsTable({ clients }: { clients: ClientWithSources[] }) {
                   }}
                 >
                   {deploying === client.id ? "Deploying..." : "Deploy"}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleGenerateQueries(client.id)}
+                  disabled={
+                    generatingQueries === client.id ||
+                    !client.knowledgeGraph
+                  }
+                  className="border text-[length:var(--text-sm)]"
+                  style={{
+                    borderColor: "var(--border-default)",
+                    color: "var(--text-primary)",
+                    background: "transparent",
+                  }}
+                >
+                  {generatingQueries === client.id
+                    ? "Generating..."
+                    : "Generate Queries"}
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => handleRunMonitoring(client.id)}
+                  disabled={
+                    runningMonitoring === client.id ||
+                    computingScores === client.id
+                  }
+                  className="text-[length:var(--text-sm)]"
+                  style={{
+                    background: "var(--accent-primary)",
+                    color: "var(--text-inverse)",
+                  }}
+                >
+                  {runningMonitoring === client.id
+                    ? "Running..."
+                    : computingScores === client.id
+                      ? "Scoring..."
+                      : "Run Monitoring"}
                 </Button>
               </div>
             </div>

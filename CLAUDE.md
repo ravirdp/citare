@@ -179,6 +179,48 @@ Knowledge Graph & Presence Layer. All 12 completion tests pass.
 - Next.js 16 warns about deprecated `middleware` file convention — should migrate to `proxy` eventually but not blocking.
 - Presence generators use defensive null guards because KG JSONB from simulation mode may have incomplete fields. This is by design — generators handle partial data gracefully.
 
+## Phase 3 — Complete (2026-03-23)
+
+Monitoring Engine & Basic Dashboard. All completion tests pass.
+
+- **Monitoring types**: `src/types/monitoring.ts` — Platform union type, GeneratedQuery, NormalizedResult, PlatformScores, dashboard response types
+- **Platform adapter template**: `src/lib/monitoring/platforms/_template.ts` — PlatformAdapter interface + `createSimulationResult()` with deterministic hash-seeded simulation (same query = same result for debugging)
+- **Query generation**: `src/lib/monitoring/query-builder.ts` — Generates monitoring queries from KG keywords (service keywords, recommendation queries, best-in-city, Hindi/Hinglish variants). Pure code, no AI dependency.
+- **Five platform adapters** (all simulation mode for Phase 3):
+  - `src/lib/monitoring/platforms/chatgpt.ts`, `perplexity.ts`, `google-aio.ts`, `gemini.ts`, `claude.ts`
+  - Registry: `platforms/index.ts` — `PLATFORM_ADAPTERS` map + `getActivePlatforms()`
+- **Scout execution pipeline**: `src/lib/monitoring/runner.ts` — `runMonitoringForClient()` (sequential per platform, `Promise.allSettled` per query), `runMonitoringForAll()` (sequential per client)
+- **Result processing**: `src/lib/monitoring/result-processor.ts` — Code-based parsing (no AI), accuracy check against KG data
+- **Visibility scoring**: `src/lib/monitoring/scoring.ts` — Formula: mentionRate × 0.5 + positionScore × 0.3 + accuracyScore × 0.2. Per-platform and per-item breakdowns. Equivalent ad spend: CPC × mentions.
+- **Event system**: `src/lib/queue/client.ts` (Upstash Redis + QStash clients), `events.ts` (XADD/XREVRANGE event emitters), `handlers/monitoring.ts` (log-only handlers)
+- **Monitoring API routes**:
+  - POST/GET `/api/monitor/queries/:clientId` — generate/list monitoring queries
+  - POST `/api/monitor/run/:clientId` — trigger monitoring for one client
+  - POST `/api/monitor/run-all` — trigger batch monitoring
+  - GET/POST `/api/monitor/scores/:clientId` — get/compute visibility scores
+  - GET/POST `/api/monitor/results/:clientId` — get/process monitoring results
+- **Dashboard API routes**:
+  - GET `/api/dashboard/:clientId/overview` — scores, trends, competitors
+  - GET `/api/dashboard/:clientId/competitors` — competitor aggregation
+  - GET `/api/dashboard/:clientId/items` — per-service/product scores
+- **Dashboard UI** (dark theme, Citare design system):
+  - Layout with fixed 240px sidebar (`src/app/(dashboard)/layout.tsx`)
+  - Sidebar with nav items: Overview, Services, Competitors, Monitoring (`src/components/dashboard/sidebar.tsx`)
+  - Client selector dropdown with URL param persistence (`src/components/dashboard/client-selector.tsx`)
+  - Dashboard components: MetricCard, VisibilityRing (SVG), PlatformBar, TrendChart (Recharts), CompetitorTable
+  - Overview page: 4 metric cards, platform breakdown, 30-day trend chart, competitor table
+  - Services page: per-service cards with visibility scores and platform breakdown
+  - Competitors page: competitor table with mentions and positions
+  - Monitoring page: recent results table with platform filter
+- **Admin UI updated**: Generate Queries + Run Monitoring buttons with auto-score computation
+- **shadcn/ui components added**: table, badge, tabs, separator, select
+- **Build**: `pnpm tsc --noEmit` zero errors, `pnpm build` succeeds (30 routes)
+
+**Known issues:**
+- Monitoring uses simulation mode only — all platform responses are deterministic hash-seeded simulations. Production adapters stub with "not yet implemented".
+- Event system emitters are defined but not yet wired into the monitoring pipeline (event emission calls not added to runner/scoring yet — consumers log-only).
+- Dashboard trend chart shows 1 data point per score computation; need 3+ days of monitoring runs for meaningful trend visualization.
+
 ## Reference Documents
 
 - `citare-product-bible-v3.docx` — Complete product vision, 14 sections
