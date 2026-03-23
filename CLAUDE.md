@@ -221,6 +221,42 @@ Monitoring Engine & Basic Dashboard. All completion tests pass.
 - Event system emitters are defined but not yet wired into the monitoring pipeline (event emission calls not added to runner/scoring yet — consumers log-only).
 - Dashboard trend chart shows 1 data point per score computation; need 3+ days of monitoring runs for meaningful trend visualization.
 
+## Phase 4 — Complete (2026-03-23)
+
+Agency System & Super Admin Console. Multi-tenancy enabled.
+
+- **Auth helper**: `src/lib/auth/user.ts` — `getAuthUser()`, `getAuthUserWithAgency()`, `requireAuth()`, `requireRole()`. Bridges Supabase Auth UID → users table (role, agencyId, clientId).
+- **Role-based middleware**: `src/middleware.ts` — Route protection by role (super_admin → admin paths, agency_admin/member → /agency/*, client → dashboard). Role cached in `x-citare-role` cookie (15-min TTL, cleared on logout). Uses Supabase PostgREST (Edge Runtime compatible, not Drizzle).
+- **Admin layout**: `src/app/(admin)/layout.tsx` with sidebar (Clients, Agencies, Health, Costs). Super admin only.
+- **Agency CRUD API routes**:
+  - `POST/GET /api/admin/agencies` — create/list agencies (with optional admin user creation via `supabaseAdmin.auth.admin.createUser`)
+  - `GET/PATCH /api/admin/agencies/:agencyId` — get/update agency
+  - `GET/POST /api/admin/agencies/:agencyId/users` — manage agency users
+  - `GET/POST /api/agency/clients` — agency-scoped client management
+  - `GET/PATCH /api/agency/settings` — agency settings + branding (hex color validation)
+- **Agencies management page**: `src/app/(admin)/agencies/` — list all agencies with client counts, "Create Agency" dialog with admin user creation
+- **Test agency seeded**: "Test Agency" (slug: test-agency, accent: #6366F1), KR Packers assigned to it
+- **Agency pages** (at `/agency/*`, not route group to avoid Next.js parallel route conflict):
+  - `src/app/agency/layout.tsx` — agency layout with sidebar
+  - `src/app/agency/clients/` — agency client list with status dots, create client dialog
+  - `src/app/agency/settings/` — name, branding (accent color + logo URL), live preview
+  - `src/app/agency/billing/` — placeholder (no Stripe in Phase 4)
+- **Agency branding injection**: Dashboard layout loads agency branding, overrides `--accent-primary` CSS variable via inline `<style>` tag. Sidebar shows agency name/logo instead of "Citare" with "Powered by Citare" subtitle.
+- **Dashboard client filtering**: Role-based: super_admin sees all, agency users see their agency's clients, client users see only their own.
+- **Super admin health page**: `src/app/(admin)/health/` — Pings Supabase, Redis, QStash with timing. Status dots + response times. Auto-refresh 30s. Model routing dropdowns (3 tiers) + failover config.
+- **Super admin costs page**: `src/app/(admin)/costs/` — Aggregate api_usage_logs by provider/tier/client. Metric cards (today/week/month). Per-client breakdown table.
+- **Admin clients enhanced**: Status summary cards (onboarding/active/paused/churned counts), agency name column, status filter tabs.
+- **Model routing + failover**: Redis-backed config (`citare:config:model_routing`, `citare:config:failover`). GET/POST APIs + UI controls on health page.
+- **shadcn/ui components added**: dialog, dropdown-menu, switch, progress, avatar, tooltip
+- **Build**: `pnpm tsc --noEmit` zero errors, `pnpm build` succeeds (48 routes)
+
+**Known issues:**
+- Agency route group changed from `(agency)` to `/agency/` to avoid Next.js parallel route conflict with `(admin)/clients`.
+- Agency reports page deferred to Phase 5 (monthly reports with shareable links).
+- No Stripe billing integration yet — billing page is a placeholder.
+- MCC integration deferred — no auto-listing of Google Ads client accounts.
+- Email alerts (Resend) not yet wired to health status changes.
+
 ## Reference Documents
 
 - `citare-product-bible-v3.docx` — Complete product vision, 14 sections

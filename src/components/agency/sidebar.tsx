@@ -1,29 +1,22 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
-import { Suspense } from "react";
-import { LayoutDashboard, Layers, Users, Activity } from "lucide-react";
-import { ClientSelector } from "./client-selector";
+import { usePathname } from "next/navigation";
+import { Users, Settings, CreditCard } from "lucide-react";
 
-interface SidebarProps {
-  clients: Array<{ id: string; name: string; slug: string }>;
-  agencyName?: string;
-  agencyLogoUrl?: string;
+interface AgencySidebarProps {
+  agencyName: string;
+  agencyLogoUrl?: string | null;
 }
 
 const NAV_ITEMS = [
-  { label: "Overview", href: "/overview", icon: LayoutDashboard },
-  { label: "Services", href: "/services", icon: Layers },
-  { label: "Competitors", href: "/competitors", icon: Users },
-  { label: "Monitoring", href: "/monitoring", icon: Activity },
+  { label: "Clients", href: "/agency/clients", icon: Users },
+  { label: "Settings", href: "/agency/settings", icon: Settings },
+  { label: "Billing", href: "/agency/billing", icon: CreditCard },
 ];
 
-export function Sidebar({ clients, agencyName, agencyLogoUrl }: SidebarProps) {
+export function AgencySidebar({ agencyName, agencyLogoUrl }: AgencySidebarProps) {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const clientIdParam = searchParams.get("clientId");
-  const queryString = clientIdParam ? `?clientId=${clientIdParam}` : "";
 
   return (
     <aside
@@ -40,7 +33,7 @@ export function Sidebar({ clients, agencyName, agencyLogoUrl }: SidebarProps) {
         zIndex: 40,
       }}
     >
-      {/* Logo */}
+      {/* Header */}
       <div
         style={{
           padding: "20px 16px 12px",
@@ -50,7 +43,7 @@ export function Sidebar({ clients, agencyName, agencyLogoUrl }: SidebarProps) {
         {agencyLogoUrl ? (
           <img
             src={agencyLogoUrl}
-            alt={agencyName ?? "Agency"}
+            alt={agencyName}
             style={{
               maxHeight: 32,
               maxWidth: "100%",
@@ -66,38 +59,9 @@ export function Sidebar({ clients, agencyName, agencyLogoUrl }: SidebarProps) {
               letterSpacing: "-0.02em",
             }}
           >
-            {agencyName ?? "Citare"}
+            {agencyName}
           </span>
         )}
-        {agencyName && (
-          <span
-            style={{
-              display: "block",
-              fontSize: "var(--text-xs)",
-              color: "var(--text-tertiary)",
-              marginTop: 4,
-            }}
-          >
-            Powered by Citare
-          </span>
-        )}
-      </div>
-
-      {/* Client selector */}
-      <div style={{ padding: "12px 16px" }}>
-        <Suspense
-          fallback={
-            <div
-              style={{
-                height: 36,
-                background: "var(--bg-tertiary)",
-                borderRadius: 6,
-              }}
-            />
-          }
-        >
-          <ClientSelector clients={clients} />
-        </Suspense>
       </div>
 
       {/* Navigation */}
@@ -108,7 +72,7 @@ export function Sidebar({ clients, agencyName, agencyLogoUrl }: SidebarProps) {
           return (
             <Link
               key={item.href}
-              href={`${item.href}${queryString}`}
+              href={item.href}
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -143,7 +107,7 @@ export function Sidebar({ clients, agencyName, agencyLogoUrl }: SidebarProps) {
         })}
       </nav>
 
-      {/* Admin link */}
+      {/* Footer */}
       <div
         style={{
           padding: "12px 16px",
@@ -151,14 +115,14 @@ export function Sidebar({ clients, agencyName, agencyLogoUrl }: SidebarProps) {
         }}
       >
         <Link
-          href="/clients"
+          href="/overview"
           style={{
             fontSize: "var(--text-xs)",
             color: "var(--text-tertiary)",
             textDecoration: "none",
           }}
         >
-          Admin
+          Dashboard
         </Link>
       </div>
     </aside>

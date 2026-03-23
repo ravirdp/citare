@@ -1,29 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
-import { Suspense } from "react";
-import { LayoutDashboard, Layers, Users, Activity } from "lucide-react";
-import { ClientSelector } from "./client-selector";
-
-interface SidebarProps {
-  clients: Array<{ id: string; name: string; slug: string }>;
-  agencyName?: string;
-  agencyLogoUrl?: string;
-}
+import { usePathname } from "next/navigation";
+import { Users, Building2, Activity, DollarSign } from "lucide-react";
 
 const NAV_ITEMS = [
-  { label: "Overview", href: "/overview", icon: LayoutDashboard },
-  { label: "Services", href: "/services", icon: Layers },
-  { label: "Competitors", href: "/competitors", icon: Users },
-  { label: "Monitoring", href: "/monitoring", icon: Activity },
+  { label: "Clients", href: "/clients", icon: Users },
+  { label: "Agencies", href: "/agencies", icon: Building2 },
+  { label: "Health", href: "/health", icon: Activity },
+  { label: "Costs", href: "/costs", icon: DollarSign },
 ];
 
-export function Sidebar({ clients, agencyName, agencyLogoUrl }: SidebarProps) {
+export function AdminSidebar() {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const clientIdParam = searchParams.get("clientId");
-  const queryString = clientIdParam ? `?clientId=${clientIdParam}` : "";
 
   return (
     <aside
@@ -40,64 +29,23 @@ export function Sidebar({ clients, agencyName, agencyLogoUrl }: SidebarProps) {
         zIndex: 40,
       }}
     >
-      {/* Logo */}
+      {/* Header */}
       <div
         style={{
           padding: "20px 16px 12px",
           borderBottom: "1px solid var(--border-subtle)",
         }}
       >
-        {agencyLogoUrl ? (
-          <img
-            src={agencyLogoUrl}
-            alt={agencyName ?? "Agency"}
-            style={{
-              maxHeight: 32,
-              maxWidth: "100%",
-              objectFit: "contain",
-            }}
-          />
-        ) : (
-          <span
-            style={{
-              fontSize: "var(--text-lg)",
-              fontWeight: 700,
-              color: "var(--accent-primary)",
-              letterSpacing: "-0.02em",
-            }}
-          >
-            {agencyName ?? "Citare"}
-          </span>
-        )}
-        {agencyName && (
-          <span
-            style={{
-              display: "block",
-              fontSize: "var(--text-xs)",
-              color: "var(--text-tertiary)",
-              marginTop: 4,
-            }}
-          >
-            Powered by Citare
-          </span>
-        )}
-      </div>
-
-      {/* Client selector */}
-      <div style={{ padding: "12px 16px" }}>
-        <Suspense
-          fallback={
-            <div
-              style={{
-                height: 36,
-                background: "var(--bg-tertiary)",
-                borderRadius: 6,
-              }}
-            />
-          }
+        <span
+          style={{
+            fontSize: "var(--text-lg)",
+            fontWeight: 700,
+            color: "var(--accent-primary)",
+            letterSpacing: "-0.02em",
+          }}
         >
-          <ClientSelector clients={clients} />
-        </Suspense>
+          Super Admin
+        </span>
       </div>
 
       {/* Navigation */}
@@ -108,7 +56,7 @@ export function Sidebar({ clients, agencyName, agencyLogoUrl }: SidebarProps) {
           return (
             <Link
               key={item.href}
-              href={`${item.href}${queryString}`}
+              href={item.href}
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -143,7 +91,7 @@ export function Sidebar({ clients, agencyName, agencyLogoUrl }: SidebarProps) {
         })}
       </nav>
 
-      {/* Admin link */}
+      {/* Footer */}
       <div
         style={{
           padding: "12px 16px",
@@ -151,14 +99,14 @@ export function Sidebar({ clients, agencyName, agencyLogoUrl }: SidebarProps) {
         }}
       >
         <Link
-          href="/clients"
+          href="/overview"
           style={{
             fontSize: "var(--text-xs)",
             color: "var(--text-tertiary)",
             textDecoration: "none",
           }}
         >
-          Admin
+          Back to Dashboard
         </Link>
       </div>
     </aside>

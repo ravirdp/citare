@@ -10,6 +10,7 @@ interface ClientWithSources {
   slug: string;
   businessType: string;
   status: string | null;
+  agencyName: string | null;
   dataSources: Array<{
     id: string;
     sourceType: string;
@@ -28,6 +29,9 @@ interface ClientWithSources {
   }>;
 }
 
+const STATUS_TABS = ["all", "onboarding", "active", "paused", "churned"] as const;
+type StatusFilter = (typeof STATUS_TABS)[number];
+
 const STATUS_COLORS: Record<string, string> = {
   active: "var(--status-green)",
   connected: "var(--status-blue)",
@@ -45,6 +49,7 @@ export function ClientsTable({ clients }: { clients: ClientWithSources[] }) {
   const [generatingQueries, setGeneratingQueries] = useState<string | null>(null);
   const [runningMonitoring, setRunningMonitoring] = useState<string | null>(null);
   const [computingScores, setComputingScores] = useState<string | null>(null);
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
 
   async function handleConnect(clientId: string) {
     window.location.href = `/api/auth/google?clientId=${clientId}`;
@@ -190,9 +195,41 @@ export function ClientsTable({ clients }: { clients: ClientWithSources[] }) {
     );
   }
 
+  const filteredClients =
+    statusFilter === "all"
+      ? clients
+      : clients.filter((c) => (c.status ?? "onboarding") === statusFilter);
+
   return (
     <div className="space-y-4">
-      {clients.map((client) => (
+      {/* Status Filter Tabs */}
+      <div
+        className="flex gap-1 rounded-lg p-1"
+        style={{ background: "var(--bg-secondary)", border: "1px solid var(--border-subtle)" }}
+      >
+        {STATUS_TABS.map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setStatusFilter(tab)}
+            style={{
+              padding: "6px 16px",
+              borderRadius: 6,
+              fontSize: "var(--text-sm)",
+              fontWeight: 500,
+              cursor: "pointer",
+              border: "none",
+              background: statusFilter === tab ? "var(--accent-muted)" : "transparent",
+              color: statusFilter === tab ? "var(--accent-primary)" : "var(--text-tertiary)",
+              textTransform: "capitalize",
+              transition: "background 0.15s, color 0.15s",
+            }}
+          >
+            {tab === "all" ? `All (${clients.length})` : `${tab} (${clients.filter((c) => (c.status ?? "onboarding") === tab).length})`}
+          </button>
+        ))}
+      </div>
+
+      {filteredClients.map((client) => (
         <Card
           key={client.id}
           className="border"
@@ -217,7 +254,7 @@ export function ClientsTable({ clients }: { clients: ClientWithSources[] }) {
                     fontFamily: "var(--font-body)",
                   }}
                 >
-                  {client.slug} · {client.businessType}
+                  {client.slug} · {client.businessType} · {client.agencyName ?? "Direct"}
                 </p>
               </div>
               <div className="flex flex-wrap gap-2">
