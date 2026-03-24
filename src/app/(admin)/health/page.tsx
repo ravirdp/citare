@@ -55,7 +55,10 @@ function HealthContent() {
       if (!res.ok) throw new Error("Failed to fetch health");
       return res.json();
     },
-    refetchInterval: 30000,
+    // FIX: Removed refetchInterval: 30000 — was causing ~8,640 Redis commands/day
+    // per open browser tab (health check pings Redis every 30s, plus model-routing
+    // and failover queries). Use manual refresh instead to stay within Upstash budget.
+    refetchOnWindowFocus: false,
   });
 
   const { data: routingData } = useQuery<{ config: ModelRouting }>({
@@ -237,8 +240,7 @@ function HealthContent() {
             style={{ color: "var(--text-tertiary)" }}
           >
             Last checked: {new Date(healthData.checkedAt).toLocaleString()} --{" "}
-            {healthyCount}/{totalCount} services healthy -- Auto-refreshes every
-            30s
+            {healthyCount}/{totalCount} services healthy
           </p>
         )}
 

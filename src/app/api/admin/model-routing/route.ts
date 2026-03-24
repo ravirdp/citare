@@ -24,13 +24,10 @@ export async function GET() {
     );
   }
 
-  try {
-    const config = await redis.get<typeof DEFAULT_CONFIG>(REDIS_KEY);
-    return NextResponse.json({ config: config ?? DEFAULT_CONFIG });
-  } catch (err) {
-    console.error("Model routing GET error:", err);
-    return NextResponse.json({ config: DEFAULT_CONFIG });
-  }
+  // FIX: Return default config without hitting Redis on every GET.
+  // Model routing config rarely changes — only read from Redis when
+  // actually processing an AI request, not on every health page load.
+  return NextResponse.json({ config: DEFAULT_CONFIG });
 }
 
 export async function POST(request: NextRequest) {

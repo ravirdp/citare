@@ -51,18 +51,10 @@ export async function emitEvent(
       data,
     };
 
-    // Use Redis XADD — stream name is the event type
-    await redis.xadd(
-      `events:${type}`,
-      "*", // auto-generate ID
-      { payload: JSON.stringify(payload) }
-    );
-
-    // Also add to a global stream for debugging
-    await redis.xadd("events:all", "*", {
-      type,
-      payload: JSON.stringify(payload),
-    });
+    // FIX: Removed dual Redis XADD (was writing to both per-type stream AND
+    // events:all global stream = 2 commands per event). Now log-only until
+    // Redis budget allows event streaming. Events are best-effort telemetry
+    // and all data is already persisted in Supabase by the callers.
 
     console.log(`[Event] ${type}`, data);
   } catch (err) {

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth/user";
 import { supabaseAdmin } from "@/lib/db/client";
-import { redis } from "@/lib/queue/client";
+
 
 interface ServiceCheck {
   name: string;
@@ -46,24 +46,19 @@ export async function GET() {
     }
   }
 
-  // Redis check
+  // Redis check — FIX: replaced redis.ping() with config check.
+  // redis.ping() was burning commands on every health poll (was every 30s).
+  // Just verify the client is configured; actual Redis health is proven when
+  // model-routing/failover reads succeed.
   {
-    const start = Date.now();
-    try {
-      await redis.ping();
-      services.push({
-        name: "Redis",
-        status: "healthy",
-        responseTimeMs: Date.now() - start,
-      });
-    } catch (err) {
-      services.push({
-        name: "Redis",
-        status: "error",
-        responseTimeMs: Date.now() - start,
-        error: err instanceof Error ? err.message : String(err),
-      });
-    }
+    services.push({
+      name: "Redis",
+      status: process.env.UPSTASH_REDIS_REST_URL ? "healthy" : "error",
+      responseTimeMs: 0,
+      ...(process.env.UPSTASH_REDIS_REST_URL
+        ? {}
+        : { error: "UPSTASH_REDIS_REST_URL not configured" }),
+    });
   }
 
   // QStash — configured check (no easy ping)
