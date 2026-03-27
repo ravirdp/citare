@@ -238,30 +238,44 @@ export default function Home() {
           <form
             action="/audit"
             method="GET"
-            className="mx-auto mt-8 flex max-w-[520px] gap-3"
+            className="mx-auto mt-8 max-w-[600px]"
           >
-            <input
-              type="url"
-              name="url"
-              placeholder="https://yourwebsite.com"
-              required
-              className="flex-1 rounded-lg px-4 py-3 text-sm outline-none"
-              style={{
-                background: "var(--bg-primary)",
-                border: "1px solid var(--border-subtle)",
-                color: "var(--text-primary)",
-              }}
-            />
-            <button
-              type="submit"
-              className="rounded-lg px-6 py-3 text-sm font-medium"
-              style={{
-                background: "var(--accent-primary)",
-                color: "var(--bg-primary)",
-              }}
-            >
-              Analyze
-            </button>
+            <div className="flex gap-3">
+              <input
+                type="url"
+                name="url"
+                placeholder="https://yourwebsite.com"
+                required
+                className="flex-1 rounded-lg px-4 py-3 text-sm outline-none"
+                style={{
+                  background: "var(--bg-primary)",
+                  border: "1px solid var(--border-subtle)",
+                  color: "var(--text-primary)",
+                }}
+              />
+              <input
+                type="text"
+                name="businessName"
+                placeholder="Business name"
+                required
+                className="w-[180px] rounded-lg px-4 py-3 text-sm outline-none"
+                style={{
+                  background: "var(--bg-primary)",
+                  border: "1px solid var(--border-subtle)",
+                  color: "var(--text-primary)",
+                }}
+              />
+              <button
+                type="submit"
+                className="rounded-lg px-6 py-3 text-sm font-medium"
+                style={{
+                  background: "var(--accent-primary)",
+                  color: "var(--bg-primary)",
+                }}
+              >
+                Analyze
+              </button>
+            </div>
           </form>
           <p
             className="mt-6 text-xs"

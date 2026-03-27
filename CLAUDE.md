@@ -188,7 +188,10 @@ Monthly Reports, Recommendations, Attribution & Feedback Loop.
 ## GTM Phase — In Progress (2026-03-27)
 
 ### Landing Page (`src/app/page.tsx`)
-Premium dark-theme landing page targeting business owners (not agencies). Server component, zero client JS. 7 sections: fixed nav, hero with dual CTAs, stats row (527%/4.4x/50%), 3-step how-it-works, 2x2 feature cards, free audit CTA with inline URL form (GET → `/audit?url=`), minimal footer. Uses Citare design system vars throughout. Responsive.
+Premium dark-theme landing page targeting business owners (not agencies). Server component, zero client JS. 7 sections: fixed nav, hero with dual CTAs, stats row (527%/4.4x/50%), 3-step how-it-works, 2x2 feature cards, free audit CTA with inline form (URL + business name, GET → `/audit?url=&businessName=`), minimal footer. Uses Citare design system vars throughout. Responsive.
+
+### Audit Lead Capture (`src/app/audit/page.tsx`)
+Lightweight lead capture form before running free audit. Top section: Website URL + Business Name (pre-filled from homepage query params). Divider, then "Tell us where to send your report" with Name + Email (required, side by side) and Phone + City (optional, side by side). Stored in `audits` table columns: `contact_name`, `contact_email`, `contact_phone`, `contact_city`. Results page (`/audit/[auditId]`) shows full report without auth — shareable URL. CTA at bottom links to `/signup` for continuous monitoring.
 
 ### Vercel Deployment
 Project linked to `ravirdp-1774s-projects/citare`. Auto-deploys on push to main at `citare.vercel.app`. Vercel CLI installed globally via pnpm. 11 env vars set for production (Supabase, Google OAuth, encryption, AI_MODE=production). Redis/QStash env vars intentionally omitted (instance deleted).

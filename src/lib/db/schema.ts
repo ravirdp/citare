@@ -322,3 +322,28 @@ export const metaIntelligenceRuns = pgTable("meta_intelligence_runs", {
   tokensUsed: integer("tokens_used"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
+
+// ══════════════════════════════════════
+// FREE AUDIT
+// ══════════════════════════════════════
+
+export const audits = pgTable(
+  "audits",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    url: text("url").notNull(),
+    businessName: text("business_name").notNull(),
+    results: jsonb("results").default({}),
+    geoScore: decimal("geo_score"),
+    status: text("status").default("pending"), // pending, running, completed, failed
+    contactName: text("contact_name"),
+    contactEmail: text("contact_email"),
+    contactPhone: text("contact_phone"),
+    contactCity: text("contact_city"),
+    errorMessage: text("error_message"),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  },
+  (table) => [
+    index("idx_audits_created").on(table.createdAt),
+  ]
+);
