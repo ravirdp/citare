@@ -163,7 +163,7 @@ function AuditForm() {
               fontWeight: 500,
             }}
           >
-            Tell us where to send your report
+            Where should we send your report?
           </p>
 
           {/* Contact fields — name and email side by side */}
@@ -251,7 +251,7 @@ function AuditForm() {
               transition: "background 0.2s",
             }}
           >
-            {loading ? "Analyzing... (this may take 30-60 seconds)" : "Run Free Audit"}
+            {loading ? "Analyzing... (this may take 30-60 seconds)" : "Analyze My AI Visibility"}
           </button>
         </form>
 

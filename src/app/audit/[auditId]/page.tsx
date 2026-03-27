@@ -426,7 +426,7 @@ export default function AuditReportPage() {
               marginBottom: 8,
             }}
           >
-            Want to improve these scores?
+            Want continuous monitoring and improvement?
           </h2>
           <p
             style={{
@@ -440,7 +440,7 @@ export default function AuditReportPage() {
             automated recommendations, and competitor analysis across 5 AI platforms.
           </p>
           <Link
-            href="/signup"
+            href="/login"
             style={{
               display: "inline-block",
               padding: "12px 32px",
@@ -452,7 +452,7 @@ export default function AuditReportPage() {
               textDecoration: "none",
             }}
           >
-            Sign Up for Continuous Monitoring
+            Sign Up Free
           </Link>
         </div>
 
