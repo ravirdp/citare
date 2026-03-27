@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth/user";
-import { redis } from "@/lib/queue/client";
+import { getRedis } from "@/lib/queue/client";
 
 const REDIS_KEY = "citare:config:failover";
 
@@ -40,6 +40,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       { error: message },
       { status: message.includes("Unauthorized") ? 401 : 403 }
+    );
+  }
+
+  const redis = getRedis();
+  if (!redis) {
+    return NextResponse.json(
+      { success: false, error: "Redis not configured. Using default settings." },
+      { status: 200 }
     );
   }
 
