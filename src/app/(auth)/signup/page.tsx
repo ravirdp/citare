@@ -8,17 +8,19 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
-function LoginForm() {
+function SignupForm() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirect = searchParams.get("redirect") || "/overview";
+  const redirect = searchParams.get("redirect") || "/onboarding";
 
-  async function handleGoogleLogin() {
+  async function handleGoogleSignup() {
     setGoogleLoading(true);
     setError(null);
     const supabase = createClient();
@@ -34,15 +36,28 @@ function LoginForm() {
     }
   }
 
-  async function handleLogin(e: React.FormEvent) {
+  async function handleEmailSignup(e: React.FormEvent) {
     e.preventDefault();
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters");
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
     const supabase = createClient();
-    const { error: authError } = await supabase.auth.signInWithPassword({
+    const { error: authError } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        data: { full_name: name },
+        emailRedirectTo: `${window.location.origin}/auth/callback?redirect=${encodeURIComponent(redirect)}`,
+      },
     });
 
     if (authError) {
@@ -51,7 +66,7 @@ function LoginForm() {
       return;
     }
 
-    router.push(redirect);
+    router.push("/onboarding");
     router.refresh();
   }
 
@@ -74,14 +89,14 @@ function LoginForm() {
           className="mt-1 text-[length:var(--text-sm)]"
           style={{ color: "var(--text-tertiary)" }}
         >
-          AI Search Intelligence Platform
+          Create your account
         </p>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Google OAuth */}
         <Button
           type="button"
-          onClick={handleGoogleLogin}
+          onClick={handleGoogleSignup}
           disabled={googleLoading}
           className="w-full font-medium"
           style={{
@@ -109,7 +124,7 @@ function LoginForm() {
               fill="#EA4335"
             />
           </svg>
-          {googleLoading ? "Redirecting..." : "Sign in with Google"}
+          {googleLoading ? "Redirecting..." : "Sign up with Google"}
         </Button>
 
         {/* Divider */}
@@ -119,13 +134,35 @@ function LoginForm() {
             className="text-[length:var(--text-xs)]"
             style={{ color: "var(--text-tertiary)" }}
           >
-            or sign in with email
+            or sign up with email
           </span>
           <div className="h-px flex-1" style={{ background: "var(--border-subtle)" }} />
         </div>
 
         {/* Email form */}
-        <form onSubmit={handleLogin} className="space-y-4">
+        <form onSubmit={handleEmailSignup} className="space-y-4">
+          <div className="space-y-2">
+            <Label
+              htmlFor="name"
+              style={{ color: "var(--text-secondary)", fontSize: "var(--text-sm)" }}
+            >
+              Name
+            </Label>
+            <Input
+              id="name"
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Your name"
+              required
+              className="border"
+              style={{
+                background: "var(--bg-tertiary)",
+                borderColor: "var(--border-default)",
+                color: "var(--text-primary)",
+              }}
+            />
+          </div>
           <div className="space-y-2">
             <Label
               htmlFor="email"
@@ -162,6 +199,30 @@ function LoginForm() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               required
+              minLength={6}
+              className="border"
+              style={{
+                background: "var(--bg-tertiary)",
+                borderColor: "var(--border-default)",
+                color: "var(--text-primary)",
+              }}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label
+              htmlFor="confirmPassword"
+              style={{ color: "var(--text-secondary)", fontSize: "var(--text-sm)" }}
+            >
+              Confirm Password
+            </Label>
+            <Input
+              id="confirmPassword"
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="••••••••"
+              required
+              minLength={6}
               className="border"
               style={{
                 background: "var(--bg-tertiary)",
@@ -190,7 +251,7 @@ function LoginForm() {
               fontSize: "var(--text-sm)",
             }}
           >
-            {loading ? "Signing in..." : "Sign in"}
+            {loading ? "Creating account..." : "Create Account"}
           </Button>
         </form>
 
@@ -198,9 +259,9 @@ function LoginForm() {
           className="text-center text-[length:var(--text-sm)]"
           style={{ color: "var(--text-tertiary)" }}
         >
-          Don&apos;t have an account?{" "}
-          <a href="/signup" style={{ color: "var(--accent-primary)" }}>
-            Sign up
+          Already have an account?{" "}
+          <a href="/login" style={{ color: "var(--accent-primary)" }}>
+            Log in
           </a>
         </p>
       </CardContent>
@@ -208,10 +269,10 @@ function LoginForm() {
   );
 }
 
-export default function LoginPage() {
+export default function SignupPage() {
   return (
     <Suspense>
-      <LoginForm />
+      <SignupForm />
     </Suspense>
   );
 }

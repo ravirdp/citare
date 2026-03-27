@@ -426,7 +426,7 @@ export default function AuditReportPage() {
               marginBottom: 8,
             }}
           >
-            Want continuous monitoring and improvement?
+            Want continuous monitoring?
           </h2>
           <p
             style={{
@@ -436,11 +436,11 @@ export default function AuditReportPage() {
               lineHeight: 1.6,
             }}
           >
-            Sign up for continuous AI monitoring — daily visibility tracking,
-            automated recommendations, and competitor analysis across 5 AI platforms.
+            Get daily visibility tracking, automated recommendations, and
+            competitor analysis across 5 AI platforms.
           </p>
           <Link
-            href="/login"
+            href="/signup"
             style={{
               display: "inline-block",
               padding: "12px 32px",

@@ -1,8 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 
-const PUBLIC_ROUTES = ["/", "/login", "/callback"];
-const PUBLIC_PREFIXES = ["/api/auth/", "/api/webhook/", "/presence/"];
+const PUBLIC_ROUTES = ["/", "/login", "/signup", "/callback", "/audit"];
+const PUBLIC_PREFIXES = ["/api/auth/", "/api/webhook/", "/presence/", "/audit/", "/api/audit/", "/auth/callback"];
 
 // Admin-only paths (super_admin required)
 const ADMIN_PATHS = ["/clients", "/agencies", "/health", "/costs"];
@@ -66,7 +66,7 @@ export async function middleware(request: NextRequest) {
 
   // Public routes — allow through
   if (isPublicRoute(pathname)) {
-    if (pathname === "/login" && user) {
+    if ((pathname === "/login" || pathname === "/signup") && user) {
       // Redirect logged-in users to their default page
       const role = await resolveRole(request, user.id, supabase);
       const url = request.nextUrl.clone();
