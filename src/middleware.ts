@@ -1,8 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 
-const PUBLIC_ROUTES = ["/", "/login", "/signup", "/callback", "/audit"];
-const PUBLIC_PREFIXES = ["/api/auth/", "/api/webhook/", "/presence/", "/audit/", "/api/audit/", "/auth/callback"];
+const PUBLIC_ROUTES = ["/", "/login", "/signup", "/callback", "/audit", "/about", "/contact"];
+const PUBLIC_PREFIXES = ["/api/auth/", "/api/webhook/", "/presence/", "/audit/", "/api/audit/", "/auth/callback", "/api/contact/"];
 
 // Admin-only paths (super_admin required)
 const ADMIN_PATHS = ["/clients", "/agencies", "/health", "/costs"];

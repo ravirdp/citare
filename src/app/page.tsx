@@ -1,6 +1,42 @@
 export default function Home() {
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Citare",
+    url: "https://www.citare.ai",
+    description:
+      "AI Search Intelligence Platform — making businesses visible across AI search platforms",
+    foundingDate: "2026",
+    areaServed: "IN",
+    sameAs: [],
+  };
+
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Citare",
+    url: "https://www.citare.ai",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: "https://www.citare.ai/audit?url={search_term_string}",
+      },
+      "query-input": "required name=search_term_string",
+    },
+  };
+
   return (
     <div style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+      />
+
       {/* Navigation */}
       <nav
         className="fixed top-0 right-0 left-0 z-50"
@@ -21,6 +57,20 @@ export default function Home() {
               style={{ color: "var(--text-secondary)" }}
             >
               Free Audit
+            </a>
+            <a
+              href="/about"
+              className="text-sm"
+              style={{ color: "var(--text-secondary)" }}
+            >
+              About
+            </a>
+            <a
+              href="/contact"
+              className="text-sm"
+              style={{ color: "var(--text-secondary)" }}
+            >
+              Contact
             </a>
             <a
               href="/login"
@@ -306,6 +356,20 @@ export default function Home() {
               style={{ color: "var(--text-tertiary)" }}
             >
               Free Audit
+            </a>
+            <a
+              href="/about"
+              className="text-xs"
+              style={{ color: "var(--text-tertiary)" }}
+            >
+              About
+            </a>
+            <a
+              href="/contact"
+              className="text-xs"
+              style={{ color: "var(--text-tertiary)" }}
+            >
+              Contact
             </a>
             <a
               href="/login"

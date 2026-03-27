@@ -327,6 +327,21 @@ export const metaIntelligenceRuns = pgTable("meta_intelligence_runs", {
 // FREE AUDIT
 // ══════════════════════════════════════
 
+export const contactSubmissions = pgTable(
+  "contact_submissions",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    name: text("name").notNull(),
+    email: text("email").notNull(),
+    phone: text("phone"),
+    message: text("message").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  },
+  (table) => [
+    index("idx_contact_submissions_created").on(table.createdAt),
+  ]
+);
+
 export const audits = pgTable(
   "audits",
   {

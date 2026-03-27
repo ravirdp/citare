@@ -54,7 +54,7 @@ Controlled by `AI_MODE` env var:
 ## Key Files
 
 - `ARCHITECTURE.md` — Complete technical spec (database schema, API routes, event system)
-- `src/lib/db/schema.ts` — Drizzle database schema (source of truth, 15 tables)
+- `src/lib/db/schema.ts` — Drizzle database schema (source of truth, 16 tables)
 - `src/lib/ai/provider.ts` — AI provider interface (strategist, worker, scout, meta)
 - `src/lib/ai/prompts/` — All AI prompts organized by tier
 - `src/lib/integrations/` — External API integrations (Google OAuth, Ads, GBP, SC, Analytics)
@@ -192,6 +192,18 @@ Premium dark-theme landing page targeting business owners (not agencies). Server
 
 ### Audit Lead Capture (`src/app/audit/page.tsx`)
 Lightweight lead capture form before running free audit. Top section: Website URL + Business Name (pre-filled from homepage query params). Divider, then "Tell us where to send your report" with Name + Email (required, side by side) and Phone + City (optional, side by side). Stored in `audits` table columns: `contact_name`, `contact_email`, `contact_phone`, `contact_city`. Results page (`/audit/[auditId]`) shows full report without auth — shareable URL. CTA at bottom links to `/signup` for continuous monitoring.
+
+### SEO & GEO Optimization
+Root layout has full Open Graph + Twitter Card meta tags, canonical URL (`https://www.citare.ai`), metadataBase. Homepage has JSON-LD Organization + WebSite schemas (WebSite includes SearchAction → `/audit`). `robots.ts` allows all crawlers with sitemap URL. `sitemap.ts` lists all static public pages + dynamic `/presence/*` from DB. `llms.txt/route.ts` serves structured LLM-friendly description of Citare (what it is, who it's for, how to get started). All headings use semantic H1/H2/H3 tags.
+
+### About Page (`src/app/about/page.tsx`)
+Public route, dark theme. 6 sections: The Problem, What We Do, How It Works, Our Approach, Built in India for India, CTA → `/audit`. JSON-LD AboutPage schema.
+
+### Contact Page (`src/app/contact/page.tsx`)
+Client component with form: Name, Email, Phone (optional), Message. Submits to `POST /api/contact/submit` → stores in `contact_submissions` table (id, name, email, phone, message, created_at). Contact info sidebar: ravi@citare.ai, Bangalore India. JSON-LD ContactPage schema. Metadata via `contact/layout.tsx`.
+
+### Navigation Updates
+Homepage navbar and footer include About + Contact links. Both `/about` and `/contact` added to `PUBLIC_ROUTES` in middleware. `/api/contact/` added to `PUBLIC_PREFIXES`.
 
 ### Vercel Deployment
 Project linked to `ravirdp-1774s-projects/citare`. Auto-deploys on push to main at `citare.vercel.app`. Vercel CLI installed globally via pnpm. 11 env vars set for production (Supabase, Google OAuth, encryption, AI_MODE=production). Redis/QStash env vars intentionally omitted (instance deleted).
