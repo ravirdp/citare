@@ -1,18 +1,21 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Users, Building2, Activity, DollarSign } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { Users, Building2, Activity, DollarSign, CreditCard, LogOut } from "lucide-react";
+import { createBrowserClient } from "@supabase/ssr";
 
 const NAV_ITEMS = [
   { label: "Clients", href: "/clients", icon: Users },
   { label: "Agencies", href: "/agencies", icon: Building2 },
+  { label: "Subscriptions", href: "/subscriptions", icon: CreditCard },
   { label: "Health", href: "/health", icon: Activity },
   { label: "Costs", href: "/costs", icon: DollarSign },
 ];
 
 export function AdminSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
 
   return (
     <aside
@@ -96,6 +99,9 @@ export function AdminSidebar() {
         style={{
           padding: "12px 16px",
           borderTop: "1px solid var(--border-subtle)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
         }}
       >
         <Link
@@ -108,6 +114,30 @@ export function AdminSidebar() {
         >
           Back to Dashboard
         </Link>
+        <button
+          onClick={async () => {
+            const supabase = createBrowserClient(
+              process.env.NEXT_PUBLIC_SUPABASE_URL!,
+              process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+            );
+            await supabase.auth.signOut();
+            router.push("/");
+          }}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+            fontSize: "var(--text-xs)",
+            color: "var(--text-tertiary)",
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            padding: 0,
+          }}
+        >
+          <LogOut size={14} />
+          Logout
+        </button>
       </div>
     </aside>
   );

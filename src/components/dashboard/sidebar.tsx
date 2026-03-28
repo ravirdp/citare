@@ -1,15 +1,21 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
-import { Suspense } from "react";
-import { LayoutDashboard, Layers, Users, Activity } from "lucide-react";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { LayoutDashboard, Layers, Users, Activity, Lightbulb, TrendingUp, FileText, CreditCard, LogOut } from "lucide-react";
+import { createBrowserClient } from "@supabase/ssr";
 import { ClientSelector } from "./client-selector";
+
+interface ClientAgencyBranding {
+  name: string;
+  accent?: string;
+  logo?: string;
+}
 
 interface SidebarProps {
   clients: Array<{ id: string; name: string; slug: string }>;
-  agencyName?: string;
-  agencyLogoUrl?: string;
+  clientAgencyMap: Record<string, ClientAgencyBranding>;
 }
 
 const NAV_ITEMS = [
@@ -17,13 +23,40 @@ const NAV_ITEMS = [
   { label: "Services", href: "/services", icon: Layers },
   { label: "Competitors", href: "/competitors", icon: Users },
   { label: "Monitoring", href: "/monitoring", icon: Activity },
+  { label: "Recommendations", href: "/recommendations", icon: Lightbulb },
+  { label: "Impact", href: "/impact", icon: TrendingUp },
+  { label: "Reports", href: "/reports", icon: FileText },
+  { label: "Billing", href: "/billing", icon: CreditCard },
 ];
 
-export function Sidebar({ clients, agencyName, agencyLogoUrl }: SidebarProps) {
+export function Sidebar({ clients, clientAgencyMap }: SidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const searchParams = useSearchParams();
-  const clientIdParam = searchParams.get("clientId");
+  const clientIdParam = searchParams.get("clientId") ?? clients[0]?.id ?? "";
   const queryString = clientIdParam ? `?clientId=${clientIdParam}` : "";
+
+  // Resolve branding from the selected client's agency
+  const branding = clientIdParam ? clientAgencyMap[clientIdParam] : undefined;
+  const [currentBranding, setCurrentBranding] = useState(branding);
+
+  // Dynamically inject accent color CSS variable when client selection changes
+  useEffect(() => {
+    const b = clientIdParam ? clientAgencyMap[clientIdParam] : undefined;
+    setCurrentBranding(b);
+
+    if (b?.accent) {
+      document.documentElement.style.setProperty("--accent-primary", b.accent);
+      document.documentElement.style.setProperty("--accent-hover", b.accent);
+    } else {
+      // Revert to default Citare teal
+      document.documentElement.style.removeProperty("--accent-primary");
+      document.documentElement.style.removeProperty("--accent-hover");
+    }
+  }, [clientIdParam, clientAgencyMap]);
+
+  const displayName = currentBranding?.name ?? "Citare";
+  const logoUrl = currentBranding?.logo;
 
   return (
     <aside
@@ -47,10 +80,10 @@ export function Sidebar({ clients, agencyName, agencyLogoUrl }: SidebarProps) {
           borderBottom: "1px solid var(--border-subtle)",
         }}
       >
-        {agencyLogoUrl ? (
+        {logoUrl ? (
           <img
-            src={agencyLogoUrl}
-            alt={agencyName ?? "Agency"}
+            src={logoUrl}
+            alt={displayName}
             style={{
               maxHeight: 32,
               maxWidth: "100%",
@@ -66,10 +99,10 @@ export function Sidebar({ clients, agencyName, agencyLogoUrl }: SidebarProps) {
               letterSpacing: "-0.02em",
             }}
           >
-            {agencyName ?? "Citare"}
+            {displayName}
           </span>
         )}
-        {agencyName && (
+        {currentBranding && (
           <span
             style={{
               display: "block",
@@ -143,11 +176,14 @@ export function Sidebar({ clients, agencyName, agencyLogoUrl }: SidebarProps) {
         })}
       </nav>
 
-      {/* Admin link */}
+      {/* Footer */}
       <div
         style={{
           padding: "12px 16px",
           borderTop: "1px solid var(--border-subtle)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
         }}
       >
         <Link
@@ -160,6 +196,30 @@ export function Sidebar({ clients, agencyName, agencyLogoUrl }: SidebarProps) {
         >
           Admin
         </Link>
+        <button
+          onClick={async () => {
+            const supabase = createBrowserClient(
+              process.env.NEXT_PUBLIC_SUPABASE_URL!,
+              process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+            );
+            await supabase.auth.signOut();
+            router.push("/");
+          }}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+            fontSize: "var(--text-xs)",
+            color: "var(--text-tertiary)",
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            padding: 0,
+          }}
+        >
+          <LogOut size={14} />
+          Logout
+        </button>
       </div>
     </aside>
   );
