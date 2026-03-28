@@ -1,9 +1,18 @@
+import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { getAuthUserWithAgency } from "@/lib/auth/user";
 import { db } from "@/lib/db/client";
-import { clients } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { clients, agencies } from "@/lib/db/schema";
+import { eq, inArray } from "drizzle-orm";
 import { Sidebar } from "@/components/dashboard/sidebar";
+import { TrialBanner } from "@/components/dashboard/trial-banner";
+
+// Agency branding shape passed to client components
+export interface ClientAgencyBranding {
+  name: string;
+  accent?: string;
+  logo?: string;
+}
 
 export default async function DashboardLayout({
   children,
@@ -14,15 +23,21 @@ export default async function DashboardLayout({
 
   if (!authUser) redirect("/login");
 
-  // Filter clients by role
-  let clientList: Array<{ id: string; name: string; slug: string }>;
+  // Filter clients by role — include agencyId for branding lookup
+  let clientRows: Array<{
+    id: string;
+    name: string;
+    slug: string;
+    agencyId: string | null;
+  }>;
 
   if (authUser.role === "super_admin") {
     const allClients = await db.select().from(clients);
-    clientList = allClients.map((c) => ({
+    clientRows = allClients.map((c) => ({
       id: c.id,
       name: c.name,
       slug: c.slug,
+      agencyId: c.agencyId,
     }));
   } else if (
     authUser.role === "agency_admin" ||
@@ -33,43 +48,72 @@ export default async function DashboardLayout({
         .select()
         .from(clients)
         .where(eq(clients.agencyId, authUser.agencyId));
-      clientList = agencyClients.map((c) => ({
+      clientRows = agencyClients.map((c) => ({
         id: c.id,
         name: c.name,
         slug: c.slug,
+        agencyId: c.agencyId,
       }));
     } else {
-      clientList = [];
+      clientRows = [];
     }
   } else if (authUser.role === "client") {
     if (authUser.clientId) {
-      const clientRows = await db
+      const rows = await db
         .select()
         .from(clients)
         .where(eq(clients.id, authUser.clientId));
-      clientList = clientRows.map((c) => ({
+      clientRows = rows.map((c) => ({
         id: c.id,
         name: c.name,
         slug: c.slug,
+        agencyId: c.agencyId,
       }));
     } else {
-      clientList = [];
+      clientRows = [];
     }
   } else {
-    clientList = [];
+    clientRows = [];
   }
 
-  // Extract agency branding
-  const agencyName = authUser.agency?.name;
-  const agencyBranding = authUser.agency?.branding as Record<string, unknown> | undefined;
-  const accentColor = agencyBranding?.accent_color as string | undefined;
-  const agencyLogoUrl = agencyBranding?.logo_url as string | undefined;
+  const clientList = clientRows.map((c) => ({
+    id: c.id,
+    name: c.name,
+    slug: c.slug,
+  }));
 
-  // Validate accent color format
-  const validAccentColor =
-    accentColor && /^#[0-9a-fA-F]{6}$/.test(accentColor)
-      ? accentColor
-      : undefined;
+  // Build client → agency branding map by fetching unique agencies
+  const clientAgencyMap: Record<string, ClientAgencyBranding> = {};
+  const uniqueAgencyIds = [
+    ...new Set(clientRows.map((c) => c.agencyId).filter(Boolean)),
+  ] as string[];
+
+  if (uniqueAgencyIds.length > 0) {
+    const agencyRows = await db
+      .select()
+      .from(agencies)
+      .where(inArray(agencies.id, uniqueAgencyIds));
+
+    const agencyById = new Map(agencyRows.map((a) => [a.id, a]));
+
+    for (const c of clientRows) {
+      if (c.agencyId) {
+        const agency = agencyById.get(c.agencyId);
+        if (agency) {
+          const branding = agency.branding as Record<string, unknown> | null;
+          const accent = branding?.accent_color as string | undefined;
+          clientAgencyMap[c.id] = {
+            name: agency.name,
+            accent:
+              accent && /^#[0-9a-fA-F]{6}$/.test(accent)
+                ? accent
+                : undefined,
+            logo: (branding?.logo_url as string) || undefined,
+          };
+        }
+      }
+    }
+  }
 
   return (
     <div
@@ -79,16 +123,15 @@ export default async function DashboardLayout({
         background: "var(--bg-primary)",
       }}
     >
-      {validAccentColor && (
-        <style>{`:root { --accent-primary: ${validAccentColor}; --accent-hover: ${validAccentColor}; }`}</style>
-      )}
       <Sidebar
         clients={clientList}
-        agencyName={agencyName}
-        agencyLogoUrl={agencyLogoUrl}
+        clientAgencyMap={clientAgencyMap}
       />
       <main style={{ flex: 1, marginLeft: 240, padding: 24 }}>
         <div style={{ maxWidth: 1400, margin: "0 auto" }}>
+          <Suspense fallback={null}>
+            <TrialBanner />
+          </Suspense>
           {children}
         </div>
       </main>
