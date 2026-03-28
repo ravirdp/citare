@@ -5,17 +5,17 @@ import { Providers } from "./providers";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Citare — AI Search Intelligence Platform",
+  title: "Citare — AI Search Intelligence Platform | Make Your Business Visible in AI Search",
   description:
-    "Make your business visible across ChatGPT, Perplexity, and Google AI. Free AI visibility audit. Continuous monitoring and optimization.",
+    "Free AI visibility audit. Monitor how ChatGPT, Perplexity, and Google AI describe your business. Actionable recommendations. Starts at ₹6,000/month.",
   metadataBase: new URL("https://www.citare.ai"),
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "Citare — AI Search Intelligence Platform",
+    title: "Citare — AI Search Intelligence Platform | Make Your Business Visible in AI Search",
     description:
-      "Make your business visible across ChatGPT, Perplexity, and Google AI. Free AI visibility audit. Continuous monitoring and optimization.",
+      "Free AI visibility audit. Monitor how ChatGPT, Perplexity, and Google AI describe your business. Actionable recommendations. Starts at ₹6,000/month.",
     url: "https://www.citare.ai",
     siteName: "Citare",
     locale: "en_IN",
@@ -31,9 +31,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Citare — AI Search Intelligence Platform",
+    title: "Citare — AI Search Intelligence Platform | Make Your Business Visible in AI Search",
     description:
-      "Make your business visible across ChatGPT, Perplexity, and Google AI. Free AI visibility audit. Continuous monitoring and optimization.",
+      "Free AI visibility audit. Monitor how ChatGPT, Perplexity, and Google AI describe your business. Actionable recommendations. Starts at ₹6,000/month.",
     images: ["/og-image.png"],
   },
   robots: {

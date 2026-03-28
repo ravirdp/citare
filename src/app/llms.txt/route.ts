@@ -2,43 +2,33 @@ export function GET() {
   const content = `# Citare
 > AI Search Intelligence Platform
 
-## What is Citare?
-Citare makes businesses visible and accurately represented across AI search platforms including ChatGPT, Perplexity, Google AI Overviews, Gemini, and Claude. It is not an SEO tool — it optimizes for how AI models consume and recommend information.
+## What Citare Does
+Citare makes businesses visible across AI search platforms including ChatGPT, Perplexity, Google AI Overviews, Gemini, and Claude. We connect to a business's Google Ads data, build an AI-optimized knowledge graph, generate structured content in formats AI platforms understand (JSON-LD, llms.txt, FAQ pages), and continuously monitor how the business appears in AI search results.
 
-## What does Citare do?
-- Ingests business data from Google Ads, Google Business Profile, Search Console, and Analytics
-- Builds a knowledge graph of the business (services, products, locations, competitors)
-- Generates AI-optimized structured data: JSON-LD, llms.txt, FAQ schema, markdown, product feeds
-- Deploys structured data for AI discovery
-- Monitors how the business appears across 5 AI platforms daily
-- Tracks AI visibility scores, competitor mentions, and accuracy
-- Provides actionable recommendations to improve AI visibility
-- Calculates the ad-equivalent value of AI visibility in INR
+## Services
+- AI Visibility Audit: Free instant analysis of any website's AI search readiness
+- AI Search Monitoring: Track how AI platforms describe and recommend your business daily
+- Presence Optimization: Generate and deploy AI-optimized structured data
+- Competitor Intelligence: Track which competitors AI platforms recommend instead of you
+- Attribution & ROI: Measure the rupee value of AI search visibility
 
-## Who is Citare for?
-- Indian businesses spending ₹10K+/month on Google Ads
+## For Whom
+- Indian businesses spending ₹10,000+/month on Google Ads
+- Healthcare clinics, education providers, e-commerce stores, professional services
 - Digital marketing agencies managing multiple clients
-- Businesses in healthcare, education, e-commerce, and professional services
-- Any business that wants to be found and accurately described by AI search platforms
 
-## Key features
-- AI Visibility Score: Single metric across ChatGPT, Perplexity, Google AI, Gemini, Claude
-- Competitor Intelligence: Track which competitors AI platforms recommend
-- Actionable Recommendations: Specific actions with data-backed reasoning
-- ROI Measurement: Ad-equivalent value of AI visibility in rupees
-- Monthly Reports: Executive summaries with trends and insights
-- Knowledge Graph: Structured representation of your business for AI consumption
+## Pricing
+- Starter: ₹6,000/month (1 location, 10 services)
+- Growth: ₹10,000/month (25 services/products)
+- E-Commerce: ₹15,000/month (30 product focus model)
+- Enterprise: ₹20,000/month (unlimited, multi-location)
+- All plans include 7-day free trial
 
-## How to get started
-- Free AI Visibility Audit: https://www.citare.ai/audit
-- Sign up: https://www.citare.ai/signup
-- Contact: ravi@citare.ai
-
-## Location
-Bangalore, India
-
-## Website
-https://www.citare.ai
+## Contact
+- Website: https://www.citare.ai
+- Email: ravi@citare.ai
+- Location: Bangalore, India
+- Free Audit: https://www.citare.ai/audit
 `;
 
   return new Response(content, {
