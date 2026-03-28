@@ -101,6 +101,17 @@ export interface AIProvider {
       content: string,
       languages: string[]
     ): Promise<MultiLangContent>;
+    generateRecommendations(
+      kg: _KnowledgeGraphData,
+      monitoringData: MonitoringData,
+      scores: Record<string, unknown>
+    ): Promise<Array<{
+      type: string;
+      priority: string;
+      title: string;
+      description: string;
+      actionData: Record<string, unknown>;
+    }>>;
   };
 
   worker: {
@@ -157,5 +168,5 @@ export async function getAIProvider(): Promise<AIProvider> {
     _provider = new SimulationProvider();
   }
 
-  return _provider;
+  return _provider!;
 }

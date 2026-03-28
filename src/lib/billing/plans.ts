@@ -1,0 +1,95 @@
+export const PLANS = {
+  trial: {
+    name: "Free Trial",
+    price: 0,
+    duration_days: 7,
+    monitoring_frequency: "every_3_days" as const,
+    max_services: 5,
+    max_products: 0,
+    features: ["basic_monitoring", "visibility_score", "competitor_tracking"],
+    razorpay_plan_id: null,
+  },
+  starter: {
+    name: "Starter",
+    price: 6000,
+    monitoring_frequency: "every_3_days" as const,
+    max_services: 10,
+    max_products: 0,
+    features: [
+      "basic_monitoring",
+      "visibility_score",
+      "competitor_tracking",
+      "recommendations",
+      "monthly_report",
+    ],
+    razorpay_plan_id: process.env.RAZORPAY_PLAN_STARTER ?? null,
+  },
+  growth: {
+    name: "Growth",
+    price: 10000,
+    monitoring_frequency: "every_3_days" as const,
+    max_services: 25,
+    max_products: 10,
+    features: [
+      "basic_monitoring",
+      "visibility_score",
+      "competitor_tracking",
+      "recommendations",
+      "monthly_report",
+      "attribution",
+      "brand_mentions",
+    ],
+    razorpay_plan_id: process.env.RAZORPAY_PLAN_GROWTH ?? null,
+  },
+  ecommerce: {
+    name: "E-Commerce",
+    price: 15000,
+    monitoring_frequency: "every_3_days" as const,
+    max_services: 15,
+    max_products: 30,
+    features: [
+      "basic_monitoring",
+      "visibility_score",
+      "competitor_tracking",
+      "recommendations",
+      "monthly_report",
+      "attribution",
+      "brand_mentions",
+      "product_feeds",
+      "product_pages",
+    ],
+    razorpay_plan_id: process.env.RAZORPAY_PLAN_ECOMMERCE ?? null,
+  },
+  enterprise: {
+    name: "Enterprise",
+    price: 20000,
+    monitoring_frequency: "every_3_days" as const,
+    max_services: -1,
+    max_products: -1,
+    features: [
+      "basic_monitoring",
+      "visibility_score",
+      "competitor_tracking",
+      "recommendations",
+      "monthly_report",
+      "attribution",
+      "brand_mentions",
+      "product_feeds",
+      "product_pages",
+      "priority_support",
+      "multi_location",
+    ],
+    razorpay_plan_id: process.env.RAZORPAY_PLAN_ENTERPRISE ?? null,
+  },
+} as const;
+
+export type PlanId = keyof typeof PLANS;
+export type Feature = (typeof PLANS)[PlanId]["features"][number];
+
+export const ADDONS = {
+  daily_monitoring: {
+    name: "Daily Monitoring",
+    price_retail: 1500,
+    razorpay_plan_id: process.env.RAZORPAY_PLAN_DAILY_ADDON ?? null,
+  },
+} as const;

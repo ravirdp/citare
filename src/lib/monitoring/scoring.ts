@@ -4,9 +4,10 @@ import {
   monitoringQueries,
   visibilityScores,
 } from "@/lib/db/schema";
-import { eq, and, gte, lt, sql } from "drizzle-orm";
-import type { Platform, PlatformScores, ItemScore, CompetitorData } from "@/types/monitoring";
+import { eq, and, gte, lt } from "drizzle-orm";
+import type { PlatformScores, ItemScore, CompetitorData } from "@/types/monitoring";
 import { ALL_PLATFORMS } from "@/types/monitoring";
+import { recomputeAuditMetrics } from "@/lib/analysis/recurring-audit";
 
 // Score weights
 const MENTION_WEIGHT = 0.5;
@@ -186,6 +187,15 @@ async function computeFromResults(
     }))
     .sort((a, b) => b.totalMentions - a.totalMentions);
 
+  // Compute audit metrics (citability, crawler access, brand authority)
+  let auditMetadata: Record<string, unknown> = {};
+  try {
+    const auditMetrics = await recomputeAuditMetrics(clientId);
+    auditMetadata = auditMetrics as unknown as Record<string, unknown>;
+  } catch (err) {
+    console.error("[Scoring] Audit metrics computation failed:", err);
+  }
+
   // Upsert visibility score
   const existing = await db
     .select()
@@ -204,6 +214,7 @@ async function computeFromResults(
     itemScores: itemScores as unknown as Record<string, unknown>,
     gadsEquivalentValueInr: String(Math.round(adEquivalentValueInr)),
     competitorComparison: competitors as unknown as Record<string, unknown>,
+    metadata: auditMetadata,
   };
 
   if (existing.length > 0) {

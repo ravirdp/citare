@@ -49,6 +49,8 @@ export function ClientsTable({ clients }: { clients: ClientWithSources[] }) {
   const [generatingQueries, setGeneratingQueries] = useState<string | null>(null);
   const [runningMonitoring, setRunningMonitoring] = useState<string | null>(null);
   const [computingScores, setComputingScores] = useState<string | null>(null);
+  const [runningFeedback, setRunningFeedback] = useState<string | null>(null);
+  const [generatingRecs, setGeneratingRecs] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
 
   async function handleConnect(clientId: string) {
@@ -380,6 +382,78 @@ export function ClientsTable({ clients }: { clients: ClientWithSources[] }) {
                     : computingScores === client.id
                       ? "Scoring..."
                       : "Run Monitoring"}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={async () => {
+                    setGeneratingRecs(client.id);
+                    try {
+                      const res = await fetch(
+                        `/api/dashboard/${client.id}/recommendations/generate`,
+                        { method: "POST" }
+                      );
+                      const data = await res.json();
+                      if (data.error) {
+                        alert(`Error: ${data.error}`);
+                      } else {
+                        alert(
+                          `Generated ${data.generated} recommendations (${data.new} new, ${data.duplicatesSkipped} duplicates skipped)`
+                        );
+                      }
+                    } catch (err) {
+                      alert(`Error: ${err}`);
+                    } finally {
+                      setGeneratingRecs(null);
+                    }
+                  }}
+                  disabled={generatingRecs === client.id}
+                  className="border text-[length:var(--text-sm)]"
+                  style={{
+                    borderColor: "var(--border-default)",
+                    color: "var(--text-primary)",
+                    background: "transparent",
+                  }}
+                >
+                  {generatingRecs === client.id
+                    ? "Generating..."
+                    : "Generate Recs"}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={async () => {
+                    setRunningFeedback(client.id);
+                    try {
+                      const res = await fetch(
+                        `/api/feedback/${client.id}/run`,
+                        { method: "POST" }
+                      );
+                      const data = await res.json();
+                      if (data.skippedDueToCooldown) {
+                        alert("Feedback loop skipped — cooldown active");
+                      } else {
+                        alert(
+                          `Feedback loop: ${data.recommendationsGenerated} recs, ${data.autoApplied} auto-applied`
+                        );
+                      }
+                    } catch (err) {
+                      alert(`Error: ${err}`);
+                    } finally {
+                      setRunningFeedback(null);
+                    }
+                  }}
+                  disabled={runningFeedback === client.id}
+                  className="border text-[length:var(--text-sm)]"
+                  style={{
+                    borderColor: "var(--border-default)",
+                    color: "var(--text-primary)",
+                    background: "transparent",
+                  }}
+                >
+                  {runningFeedback === client.id
+                    ? "Running..."
+                    : "Feedback Loop"}
                 </Button>
               </div>
             </div>

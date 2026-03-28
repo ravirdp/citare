@@ -59,6 +59,13 @@ export default function Home() {
               Free Audit
             </a>
             <a
+              href="/pricing"
+              className="text-sm"
+              style={{ color: "var(--text-secondary)" }}
+            >
+              Pricing
+            </a>
+            <a
               href="/about"
               className="text-sm"
               style={{ color: "var(--text-secondary)" }}

@@ -10,7 +10,7 @@ Citare is an AI Search Intelligence Platform that makes businesses visible and a
 
 ## Architecture Summary
 
-Three layers sharing a central knowledge graph, connected by an event system:
+Three layers sharing a central knowledge graph:
 - **Layer 1 (Intelligence)**: Ingest data from Google Ads, GBP, Analytics, etc. → build knowledge graph
 - **Layer 2 (Presence)**: Knowledge graph → JSON-LD, llms.txt, FAQ, markdown, product feeds → deploy
 - **Layer 3 (Monitoring)**: Query AI platforms daily → track visibility, accuracy, competitors → feed insights back
@@ -28,12 +28,13 @@ Four AI tiers:
 | Framework | Next.js 16 (App Router), TypeScript strict |
 | Database | Supabase (PostgreSQL + Auth + RLS + Storage) |
 | ORM | Drizzle ORM |
-| Queue/Cache | Removed — was Upstash Redis + QStash (deleted due to runaway costs) |
 | Frontend | Tailwind CSS 4 + shadcn/ui + React Query + Recharts |
-| Hosting | Vercel (citare.vercel.app, auto-deploy on push to main) |
+| Hosting | Vercel (citare.vercel.app → www.citare.ai, auto-deploy on push to main) |
 | AI | Anthropic (Claude), OpenAI, Perplexity, Google Gemini APIs |
 | Email | Resend |
 | Package Manager | pnpm |
+
+**No queue/cache layer.** Upstash Redis + QStash were removed entirely (packages uninstalled 2026-03-28). Event system is log-only. Model routing and failover use hardcoded defaults.
 
 ## Developer Machine
 
@@ -41,31 +42,33 @@ Four AI tiers:
 Dell Inc. 04N9HV — i5-1035G1, 7.53 GiB RAM, 230 GiB disk, Pop!_OS 24.04
 ```
 
-**Constraints**: No Docker, no local DB, no local Redis. Everything cloud. Max 2-3 dev processes simultaneously. Use pnpm, not npm. All AI processing via API, never local. `pnpm build` requires `NODE_OPTIONS="--max-old-space-size=4096"` on dev machine (works fine on Vercel).
+**Constraints**: No Docker, no local DB. Everything cloud. Max 2-3 dev processes simultaneously. Use pnpm, not npm. All AI processing via API, never local. `pnpm build` requires `NODE_OPTIONS="--max-old-space-size=4096"` on dev machine (works fine on Vercel).
 
 ## AI Mode
 
 Controlled by `AI_MODE` env var:
 - `simulation`: Prompts written to files, responses read from files. Developer processes them via Claude Max.
-- `production`: Real API calls to Anthropic, OpenAI, etc.
+- `production`: Real API calls to Anthropic, OpenAI, etc. **Not yet implemented** — all production provider methods throw errors.
 
-**During development, always use simulation mode.**
+**Both local (.env.local) and Vercel production use `AI_MODE=simulation`.** Do not set to `production` until platform adapters and ProductionProvider are implemented.
 
 ## Key Files
 
 - `ARCHITECTURE.md` — Complete technical spec (database schema, API routes, event system)
-- `src/lib/db/schema.ts` — Drizzle database schema (source of truth, 16 tables)
+- `src/lib/db/schema.ts` — Drizzle database schema (source of truth, 17 tables)
 - `src/lib/ai/provider.ts` — AI provider interface (strategist, worker, scout, meta)
+- `src/lib/ai/production.ts` — Production provider (all 14 methods stub with "not yet implemented")
+- `src/lib/ai/simulation.ts` — Simulation provider (writes prompts to disk, reads responses)
 - `src/lib/ai/prompts/` — All AI prompts organized by tier
 - `src/lib/integrations/` — External API integrations (Google OAuth, Ads, GBP, SC, Analytics)
 - `src/lib/knowledge-graph/` — KG operations (types, queries, builder, synthesize, cooldown)
 - `src/lib/presence/` — Output format generators (JSON-LD, llms.txt, FAQ, markdown, product feed)
-- `src/lib/monitoring/` — Platform monitoring (5 adapters, query builder, runner, scoring)
+- `src/lib/monitoring/` — Platform monitoring (5 adapters — all simulation stubs, query builder, runner, scoring)
 - `src/lib/attribution/` — AI search impact attribution engine
 - `src/lib/recommendations/` — Intelligent recommendation generator
 - `src/lib/reports/` — Monthly report generation
 - `src/lib/feedback/` — Automated feedback loop with cooldown
-- `src/lib/queue/` — Event system (log-only, Redis fully optional — gracefully returns null if unconfigured)
+- `src/lib/queue/` — Stub module. `getRedis()` always returns `null`. No Redis dependency.
 - `src/lib/auth/user.ts` — Auth helpers (getAuthUser, requireAuth, requireRole)
 
 ## Coding Conventions
@@ -76,7 +79,6 @@ Controlled by `AI_MODE` env var:
 - All AI calls go through the AIProvider interface (never call APIs directly)
 - Use JSONB for evolving data structures, extract to tables when patterns stabilize
 - Every new integration follows the `_template.ts` pattern in its directory
-- Event-driven: changes emit events, subscribers react. No tight coupling between layers.
 - Functions are small and single-purpose. If a function exceeds 50 lines, split it.
 - All costs logged in api_usage_logs for every AI and external API call
 
@@ -105,110 +107,76 @@ Row Level Security (RLS) at database level. Agency users only see their clients.
 
 ---
 
-## Phases 0–4 — Complete (2026-03-22 to 2026-03-23)
+## Auth & Signup Flow
 
-### Phase 0: Foundation
-Next.js 16 + TypeScript strict + App Router + Tailwind CSS 4 + pnpm. Drizzle schema (15 tables), Citare design system (AESTHETIC.md), AI provider interface (simulation + production), directory structure, env config. Git at `github.com/ravirdp/citare`.
+### Google OAuth Signup
+User clicks "Sign up with Google" → Supabase OAuth → Google consent → `/auth/callback` → exchanges code for session → creates `clients` row (slug auto-generated, status `onboarding`, type `physical`) → creates `users` row with `role: "client"` linked to new client → redirects to `/onboarding`.
 
-### Phase 1: Database, Auth & Google Data Ingestion
-Supabase database live (15 tables, RLS on all). Supabase Auth with cookie-based sessions (`@supabase/ssr`). Login page, super admin seeded (ravirdp@gmail.com). Google OAuth flow for data ingestion (Ads, GBP, Search Console, Analytics — 4 integrations following `_template.ts` pattern). Ingestion orchestrator with `Promise.allSettled`. Admin clients page with status indicators. **Note**: DB migrations applied via Supabase MCP (local `DATABASE_URL` with `postgres` driver has password auth issues). Google integrations structurally complete but not yet tested with real API data.
+### Email Signup
+Form at `/signup` → `supabase.auth.signUp()` → email verification → `/auth/callback` → same client + user creation flow → `/onboarding`.
 
-### Phase 2: Knowledge Graph & Presence Layer
-3 test businesses seeded (Clinique Bangalore, Leverage Edu, KR Packers Jaipur). Full KG type system, CRUD with atomic versioned transactions, synthesis orchestration. Simulation mode with deterministic prompt IDs. Strategist prompts for KG synthesis, decision radius classification, multi-language, and presence generation. 5 presence generators (JSON-LD, llms.txt, FAQ, markdown, product feed) with defensive null guards. Public presence routes at `/presence/:slug/*` (unauthenticated, CDN-cached). KG event system (lightweight, migrated to log-only in Phase 4).
+### Role-Based Access
+- `super_admin` → `/clients` (admin console)
+- `agency_admin` / `agency_member` → `/agency/clients`
+- `client` → `/overview` (dashboard)
 
-### Phase 3: Monitoring Engine & Dashboard
-5 platform adapters (ChatGPT, Perplexity, Google AIO, Gemini, Claude) — all simulation mode with deterministic hash-seeded results. Query generation from KG keywords (pure code, no AI). Scout execution pipeline, result processing, visibility scoring (mentionRate × 0.5 + positionScore × 0.3 + accuracyScore × 0.2). Dashboard UI with sidebar, client selector, MetricCard, VisibilityRing, PlatformBar, TrendChart, CompetitorTable. Pages: Overview, Services, Competitors, Monitoring. Event system (Upstash Redis + QStash clients, log-only handlers).
+Agency users can only be created by super_admin via `POST /api/admin/agencies/[agencyId]/users`. No self-service agency registration.
 
-### Phase 4: Agency System & Super Admin Console
-Auth helpers bridging Supabase Auth → users table. Role-based middleware with cookie-cached roles (15-min TTL). Agency CRUD, branding injection (accent color + logo via CSS variables), agency pages at `/agency/*`. Super admin console: agencies management, health page (Supabase/Redis/QStash status, model routing, failover config), costs page (api_usage_logs aggregation). Test agency seeded ("Test Agency", slug: test-agency). shadcn/ui components: button, input, label, card, table, badge, tabs, separator, select, dialog, dropdown-menu, switch, progress, avatar, tooltip.
+---
 
-### Persistent Known Issues from Phases 0–4
+## Phases 0–4 — Foundation through Agency System (2026-03-22 to 2026-03-23)
+
+Supabase database (17 tables, RLS on all). Supabase Auth with cookie-based sessions. Login/signup pages. Super admin seeded (ravirdp@gmail.com). Google OAuth for data ingestion (4 integrations). 3 test businesses seeded (Clinique Bangalore, Leverage Edu, KR Packers Jaipur). Full knowledge graph type system with versioned CRUD. 5 presence generators with public routes at `/presence/:slug/*`. 5 monitoring platform adapters (all simulation mode). Dashboard UI (sidebar, client selector, 7 pages). Role-based middleware with cookie-cached roles. Agency system with branding injection. Super admin console (agencies, health, costs). shadcn/ui component library.
+
+## Phase 5 — Attribution, Recommendations, Reports & Feedback (2026-03-24)
+
+### AI Search Impact Attribution (`src/lib/attribution/`)
+Composite score from 4 weighted signals — AI Visibility (40%), Traffic Correlation (25%), Actions Correlation (25%), Discovery Survey (10%). Dashboard at `/impact`. API: `GET/POST /api/dashboard/[clientId]/attribution`.
+
+### Intelligent Recommendations (`src/lib/recommendations/`)
+Code-based tier-zero analysis (no AI needed), 5 analyzers: accuracy_fix, gap_alert, competitive_alert, content_update, spend_optimization. Deduplication and auto-apply for critical fixes. Dashboard at `/recommendations`. API: `GET/POST /api/dashboard/[clientId]/recommendations`.
+
+### Monthly Reports (`src/lib/reports/`)
+Aggregates visibility_scores, monitoring_results, recommendations. Dashboard at `/reports`. Agency reports placeholder at `/agency/reports/`.
+
+### Feedback Loop (`src/lib/feedback/`)
+Automated cycle with 48-hour cooldown. API: `POST /api/feedback/[clientId]/run`.
+
+## GTM Phase — In Progress (2026-03-27 to present)
+
+### Public Pages
+- **Landing page** (`/`): Dark-theme, server component, 7 sections, free audit CTA form
+- **Audit** (`/audit`, `/audit/[auditId]`): Lead capture → run audit → shareable results (no auth required)
+- **About** (`/about`): 6 sections, JSON-LD AboutPage schema
+- **Contact** (`/contact`): Form → `POST /api/contact/submit` → `contact_submissions` table
+- **Privacy** (`/privacy`): Privacy policy covering data collection, usage, retention, third-party services, rights
+
+### SEO & GEO
+Open Graph + Twitter Card meta. JSON-LD schemas (Organization, WebSite with SearchAction). `robots.ts`, `sitemap.ts` (static + dynamic presence pages), `llms.txt` route.
+
+### Onboarding Integration OAuth
+`POST /api/integrations/google/[serviceId]/auth-url` — returns Google OAuth consent URL scoped per service (ads, gbp, search-console, analytics). Called by onboarding page. Requires auth + clientId.
+
+### Vercel Deployment
+Project: `ravirdp-1774s-projects/citare`. Auto-deploys on push to main. Domain: `www.citare.ai`. 11 env vars set (Supabase, Google OAuth, encryption, `AI_MODE=simulation`).
+
+---
+
+## Current Known Issues
+
 - `DATABASE_URL` (transaction pooler port 6543) fails with `postgres` npm driver locally — use Supabase MCP for DDL operations. Runtime on Vercel works.
-- Monitoring uses simulation mode only — production adapters stub with "not yet implemented".
-- **Upstash Redis instance deleted** (2026-03-27). Event system is log-only, model routing and failover use hardcoded defaults. Redis client is lazy-loaded and returns null if env vars are missing — app runs fully without Redis. Admin POST routes return friendly "Redis not configured" message. If Redis is re-added in future, just set `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` env vars.
+- **All monitoring adapters are simulation stubs.** Production mode throws "not yet implemented" for all 5 platforms (ChatGPT, Perplexity, Google AIO, Gemini, Claude) and all 14 ProductionProvider methods.
+- **Missing API keys**: `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `PERPLEXITY_API_KEY`, `GOOGLE_GEMINI_API_KEY`, `SERP_API_KEY` — none configured.
 - No Stripe billing integration — agency billing page is a placeholder.
 - MCC integration deferred — no auto-listing of Google Ads client accounts.
 - Email alerts (Resend) not yet wired to health status changes.
 - Next.js 16 warns about deprecated `middleware` file convention — should migrate to `proxy` eventually.
-
----
-
-## Phase 5 — Complete (2026-03-24)
-
-Monthly Reports, Recommendations, Attribution & Feedback Loop.
-
-### AI Search Impact Attribution (`src/lib/attribution/`)
-- **Engine** (`engine.ts`): Composite score from 4 weighted signals — AI Visibility (40%), Traffic Correlation (25%), Actions Correlation (25%), Discovery Survey (10%). Pearson correlation with time-lag detection (0–14 days). Significance assessment (strong/moderate/weak/insufficient).
-- **Collectors**: `traffic-collector.ts` (branded search + direct traffic from GA), `action-collector.ts` (GBP insights: calls, directions, clicks).
-- **Dashboard**: `/impact` page — composite score, monthly touchpoints, ad equivalency (INR), signal breakdown cards, correlation strength.
-- **API**: `GET /api/dashboard/[clientId]/attribution`, `POST /api/dashboard/[clientId]/attribution/compute`.
-
-### Intelligent Recommendations (`src/lib/recommendations/`)
-- **Generator** (`generator.ts`): Code-based tier-zero analysis (no AI), 5 independent analyzers:
-  1. `accuracy_fix` (critical) — AI platforms showing wrong info; auto-applies to regenerate presence
-  2. `gap_alert` (high) — Services with <40% mention rate across monitoring queries
-  3. `competitive_alert` (medium/high) — Competitors with >50% of client's visibility
-  4. `content_update` (medium) — Presence formats stale >30 days
-  5. `spend_optimization` (low) — High AI visibility for keywords with paid ad spend
-- **Orchestrator** (`orchestrator.ts`): Deduplication against existing pending recommendations + persistence.
-- **AI prompt** (`strategist/generate-recommendations.ts`): Simulation-mode ready for Claude Max enhancement.
-- **Dashboard**: `/recommendations` page — status filters (all/pending/applied/rejected), Generate button, RecommendationCard with priority/type badges and Approve/Reject actions.
-- **API**: `GET /api/dashboard/[clientId]/recommendations` (with status/type filters), `POST .../generate`, `POST .../[id]/approve` (executes action + auto-regenerates presence), `POST .../[id]/reject`.
-
-### Monthly Reports (`src/lib/reports/`)
-- **Generator** (`generator.ts`): Aggregates visibility_scores, monitoring_results, recommendations for a given month. Summary metrics (avg visibility, peak score, total queries, ad value), 30-day trend data, top 5 competitors, recommendations summary, auto-generated highlights.
-- **AI prompt** (`strategist/monthly-report.ts`): Template for Claude to generate executive narrative.
-- **Dashboard**: `/reports` page — month selector, 4 metric cards, highlights, recommendation summary, competitor analysis.
-- **Agency reports**: `agency/reports/` — placeholder for shareable client report links.
-- **API**: `GET /api/reports/[clientId]/[month]` (retrieve or auto-generate), `POST /api/reports/[clientId]/generate`.
-
-### Feedback Loop (`src/lib/feedback/`)
-- **Loop** (`loop.ts`): Automated cycle — check 48-hour cooldown → compute visibility score → generate recommendations → auto-apply critical accuracy fixes → regenerate presence if fixes applied → set cooldown.
-- **Cooldown** (`knowledge-graph/cooldown.ts`): 48-hour minimum between full loop runs to prevent thrashing.
-- **API**: `POST /api/feedback/[clientId]/run` — manual trigger or schedulable via Vercel Cron.
-- Uses direct function calls (not Redis events). Redis removed entirely.
-
-### Product Detail Pages (`src/app/presence/[slug]/product/`)
-- Public SEO-optimized detail pages for individual products/services from KG.
-- Searches both `products` and `services` arrays. Schema.org Product JSON-LD. Breadcrumbs, images, price, ratings, specs table, use cases.
-
-### UI Additions
-- **Components**: `RecommendationCard` (priority/type/status badges, approve/reject with loading states), `SignalCard` (attribution signal display with weight % and availability).
-- **Sidebar**: Updated to 7 nav items — Overview, Services, Competitors, Monitoring, Recommendations, Impact, Reports.
-- **Agency branding fix**: Dashboard now uses selected client's agency for branding instead of user's own agency. Super admin sees correct branding when switching clients across agencies.
-- **Admin clients page**: "Generate Recommendations" button added.
-
-### Phase 5 Known Issues
-- AI enhancement of recommendations and reports is simulation-mode only — prompts written, awaiting Claude Max processing. Code-based generation works fully without AI.
+- AI enhancement of recommendations and reports is simulation-mode only. Code-based generation works without AI.
 - Agency reports page is a placeholder (shareable links not yet implemented).
-- Recommendation thresholds tuned for seed data (mentionRate 0.4 for gap alerts, competitor visibility >50%, CPC-less spend optimizations). May need adjustment with real monitoring data.
-
----
-
-## GTM Phase — In Progress (2026-03-27)
-
-### Landing Page (`src/app/page.tsx`)
-Premium dark-theme landing page targeting business owners (not agencies). Server component, zero client JS. 7 sections: fixed nav, hero with dual CTAs, stats row (527%/4.4x/50%), 3-step how-it-works, 2x2 feature cards, free audit CTA with inline form (URL + business name, GET → `/audit?url=&businessName=`), minimal footer. Uses Citare design system vars throughout. Responsive.
-
-### Audit Lead Capture (`src/app/audit/page.tsx`)
-Lightweight lead capture form before running free audit. Top section: Website URL + Business Name (pre-filled from homepage query params). Divider, then "Tell us where to send your report" with Name + Email (required, side by side) and Phone + City (optional, side by side). Stored in `audits` table columns: `contact_name`, `contact_email`, `contact_phone`, `contact_city`. Results page (`/audit/[auditId]`) shows full report without auth — shareable URL. CTA at bottom links to `/signup` for continuous monitoring.
-
-### SEO & GEO Optimization
-Root layout has full Open Graph + Twitter Card meta tags, canonical URL (`https://www.citare.ai`), metadataBase. Homepage has JSON-LD Organization + WebSite schemas (WebSite includes SearchAction → `/audit`). `robots.ts` allows all crawlers with sitemap URL. `sitemap.ts` lists all static public pages + dynamic `/presence/*` from DB. `llms.txt/route.ts` serves structured LLM-friendly description of Citare (what it is, who it's for, how to get started). All headings use semantic H1/H2/H3 tags.
-
-### About Page (`src/app/about/page.tsx`)
-Public route, dark theme. 6 sections: The Problem, What We Do, How It Works, Our Approach, Built in India for India, CTA → `/audit`. JSON-LD AboutPage schema.
-
-### Contact Page (`src/app/contact/page.tsx`)
-Client component with form: Name, Email, Phone (optional), Message. Submits to `POST /api/contact/submit` → stores in `contact_submissions` table (id, name, email, phone, message, created_at). Contact info sidebar: ravi@citare.ai, Bangalore India. JSON-LD ContactPage schema. Metadata via `contact/layout.tsx`.
-
-### Navigation Updates
-Homepage navbar and footer include About + Contact links. Both `/about` and `/contact` added to `PUBLIC_ROUTES` in middleware. `/api/contact/` added to `PUBLIC_PREFIXES`.
-
-### Vercel Deployment
-Project linked to `ravirdp-1774s-projects/citare`. Auto-deploys on push to main at `citare.vercel.app`. Vercel CLI installed globally via pnpm. 11 env vars set for production (Supabase, Google OAuth, encryption, AI_MODE=production). Redis/QStash env vars intentionally omitted (instance deleted).
-
----
+- Monitoring runner has no subscription/frequency gating — runs all active queries for any client without checks.
+- 3 DB tables unused: `systemHealthLogs`, `experiments`, `metaIntelligenceRuns`.
+- 10 API routes have no frontend calling them (KG CRUD, KG history/rollback, admin agency detail/users, per-client costs, monitor run-all).
+- Google integrations structurally complete but not tested with real API data.
 
 ## Reference Documents
 

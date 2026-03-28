@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { synthesizeKnowledgeGraph } from "@/lib/knowledge-graph/synthesize";
+import { isSubscriptionActive } from "@/lib/billing/guards";
 
 /**
  * POST /api/kg/:clientId/synthesize
@@ -21,6 +22,13 @@ export async function POST(
   }
 
   const { clientId } = await params;
+
+  if (!(await isSubscriptionActive(clientId))) {
+    return NextResponse.json(
+      { error: "Subscription expired. Please upgrade.", upgrade_url: "/billing" },
+      { status: 403 }
+    );
+  }
 
   const result = await synthesizeKnowledgeGraph(clientId);
 

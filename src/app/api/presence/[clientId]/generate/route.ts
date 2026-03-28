@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { generatePresenceContent } from "@/lib/presence/orchestrator";
 import type { PresenceFormat } from "@/lib/presence/types";
+import { isSubscriptionActive } from "@/lib/billing/guards";
 
 /**
  * POST /api/presence/:clientId/generate
@@ -22,6 +23,13 @@ export async function POST(
   }
 
   const { clientId } = await params;
+
+  if (!(await isSubscriptionActive(clientId))) {
+    return NextResponse.json(
+      { error: "Subscription expired. Please upgrade.", upgrade_url: "/billing" },
+      { status: 403 }
+    );
+  }
 
   try {
     let formats: PresenceFormat[] | undefined;

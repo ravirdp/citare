@@ -50,6 +50,28 @@ function OverviewContent() {
     enabled: !!clientId,
   });
 
+  const { data: citabilityData } = useQuery<{ overallCitabilityScore: number }>({
+    queryKey: ["citability", clientId],
+    queryFn: async () => {
+      if (!clientId) return null;
+      const res = await fetch(`/api/presence/${clientId}/citability`);
+      if (!res.ok) return { overallCitabilityScore: 0 };
+      return res.json();
+    },
+    enabled: !!clientId,
+  });
+
+  const { data: crawlerData } = useQuery<{ overallStatus: string }>({
+    queryKey: ["crawler-access", clientId],
+    queryFn: async () => {
+      if (!clientId) return null;
+      const res = await fetch(`/api/analysis/${clientId}/crawler-access`);
+      if (!res.ok) return { overallStatus: "unknown" };
+      return res.json();
+    },
+    enabled: !!clientId,
+  });
+
   if (!clientId) {
     return (
       <div style={{ color: "var(--text-tertiary)", fontSize: "var(--text-sm)" }}>
@@ -117,7 +139,7 @@ function OverviewContent() {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(4, 1fr)",
+          gridTemplateColumns: "repeat(3, 1fr)",
           gap: 16,
         }}
       >
@@ -143,6 +165,38 @@ function OverviewContent() {
         <MetricCard
           label="Competitors Tracked"
           value={data.competitorsTracked ?? 0}
+        />
+        <MetricCard
+          label="Citability Score"
+          value={citabilityData?.overallCitabilityScore ?? 0}
+          valueColor={
+            (citabilityData?.overallCitabilityScore ?? 0) >= 65
+              ? "var(--status-green)"
+              : (citabilityData?.overallCitabilityScore ?? 0) >= 50
+                ? "var(--status-yellow)"
+                : "var(--status-red)"
+          }
+        />
+        <MetricCard
+          label="AI Crawler Access"
+          value={
+            crawlerData?.overallStatus === "all_allowed"
+              ? "Open"
+              : crawlerData?.overallStatus === "some_blocked"
+                ? "Partial"
+                : crawlerData?.overallStatus === "critical_blocked"
+                  ? "Blocked"
+                  : "N/A"
+          }
+          valueColor={
+            crawlerData?.overallStatus === "all_allowed"
+              ? "var(--status-green)"
+              : crawlerData?.overallStatus === "some_blocked"
+                ? "var(--status-yellow)"
+                : crawlerData?.overallStatus === "critical_blocked"
+                  ? "var(--status-red)"
+                  : "var(--text-tertiary)"
+          }
         />
       </div>
 

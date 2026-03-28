@@ -324,6 +324,39 @@ export const metaIntelligenceRuns = pgTable("meta_intelligence_runs", {
 });
 
 // ══════════════════════════════════════
+// BILLING & SUBSCRIPTIONS
+// ══════════════════════════════════════
+
+export const subscriptions = pgTable(
+  "subscriptions",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    clientId: uuid("client_id")
+      .notNull()
+      .references(() => clients.id, { onDelete: "cascade" }),
+    plan: text("plan").notNull().default("trial"),
+    status: text("status").notNull().default("trialing"),
+    monitoringFrequency: text("monitoring_frequency").notNull().default("every_3_days"),
+    trialStart: timestamp("trial_start", { withTimezone: true }).defaultNow(),
+    trialEnd: timestamp("trial_end", { withTimezone: true }),
+    monthlyFeeInr: integer("monthly_fee_inr").default(0),
+    razorpaySubscriptionId: text("razorpay_subscription_id"),
+    razorpayCustomerId: text("razorpay_customer_id"),
+    razorpayPlanId: text("razorpay_plan_id"),
+    currentPeriodStart: timestamp("current_period_start", { withTimezone: true }),
+    currentPeriodEnd: timestamp("current_period_end", { withTimezone: true }),
+    cancelledAt: timestamp("cancelled_at", { withTimezone: true }),
+    metadata: jsonb("metadata").default({}),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+  },
+  (table) => [
+    index("idx_subscriptions_client").on(table.clientId),
+    index("idx_subscriptions_status").on(table.status),
+  ]
+);
+
+// ══════════════════════════════════════
 // FREE AUDIT
 // ══════════════════════════════════════
 

@@ -8,6 +8,7 @@ import { llmsTxtGenerator } from "./llms-txt";
 import { faqGenerator } from "./faq";
 import { markdownGenerator } from "./markdown";
 import { productFeedGenerator } from "./product-feed";
+import { analyzeContentCitability } from "@/lib/analysis/citability";
 import type { KnowledgeGraphData } from "@/lib/knowledge-graph/types";
 import type { PresenceGenerator, ClientRecord, PresenceFormat, GenerationResult } from "./types";
 
@@ -99,6 +100,10 @@ export async function generatePresenceContent(
           return { format, language, content: "", contentHash, status: "unchanged" };
         }
 
+        // Auto-score citability
+        const citability = analyzeContentCitability(content);
+        const metadata = { citabilityScore: citability.averageScore };
+
         // Upsert
         if (existing) {
           await db
@@ -107,6 +112,7 @@ export async function generatePresenceContent(
               content,
               contentHash,
               status: "draft",
+              metadata,
               updatedAt: new Date(),
             })
             .where(eq(presenceDeployments.id, existing.id));
@@ -119,6 +125,7 @@ export async function generatePresenceContent(
             content,
             contentHash,
             status: "draft",
+            metadata,
           });
         }
 

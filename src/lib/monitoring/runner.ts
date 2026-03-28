@@ -1,7 +1,8 @@
 import { db } from "@/lib/db/client";
 import { monitoringQueries, monitoringResults, clients } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 import { getActivePlatforms } from "./platforms";
+import { getSubscriptionForClient } from "@/lib/billing/guards";
 
 interface RunResult {
   queriesRun: number;
@@ -25,6 +26,34 @@ export async function runMonitoringForClient(
 
   if (!client) {
     throw new Error(`Client not found: ${clientId}`);
+  }
+
+  // Check subscription status
+  const sub = await getSubscriptionForClient(clientId);
+  if (!sub) {
+    throw new Error("No subscription found. Monitoring skipped.");
+  }
+
+  const isActive = sub.status === "active" || (sub.status === "trialing" && (!sub.trialEnd || sub.trialEnd.getTime() > Date.now()));
+  if (!isActive) {
+    throw new Error(`Subscription ${sub.status}. Monitoring skipped.`);
+  }
+
+  // Check monitoring frequency
+  if (sub.monitoringFrequency === "every_3_days") {
+    const [lastResult] = await db
+      .select({ queriedAt: monitoringResults.queriedAt })
+      .from(monitoringResults)
+      .where(eq(monitoringResults.clientId, clientId))
+      .orderBy(desc(monitoringResults.queriedAt))
+      .limit(1);
+
+    if (lastResult?.queriedAt) {
+      const hoursSince = (Date.now() - lastResult.queriedAt.getTime()) / 3600000;
+      if (hoursSince < 72) {
+        throw new Error(`Monitoring frequency: every 3 days. Last run ${Math.floor(hoursSince)}h ago. Skipped.`);
+      }
+    }
   }
 
   const bp = (client.metadata as Record<string, unknown>) ?? {};

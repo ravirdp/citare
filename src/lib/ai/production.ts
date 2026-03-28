@@ -52,6 +52,19 @@ export class ProductionProvider implements AIProvider {
     ): Promise<MultiLangContent> {
       throw new Error("ProductionProvider.strategist not yet implemented");
     },
+    async generateRecommendations(
+      _kg: KnowledgeGraphData,
+      _monitoringData: MonitoringData,
+      _scores: Record<string, unknown>
+    ): Promise<Array<{
+      type: string;
+      priority: string;
+      title: string;
+      description: string;
+      actionData: Record<string, unknown>;
+    }>> {
+      throw new Error("ProductionProvider.strategist not yet implemented");
+    },
   };
 
   worker = {

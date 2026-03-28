@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { db } from "@/lib/db/client";
-import { users } from "@/lib/db/schema";
+import { users, clients, subscriptions } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 
 export async function GET(request: NextRequest) {
@@ -73,21 +73,51 @@ export async function GET(request: NextRequest) {
     return redirectResponse;
   }
 
-  // New user — create users row and redirect to onboarding
+  // New user — create users row + client record, then redirect to onboarding
   const fullName =
     authUser.user_metadata?.full_name ||
     authUser.user_metadata?.name ||
     authUser.email?.split("@")[0] ||
     "User";
 
+  // Generate a unique slug from the name
+  const baseSlug = (fullName as string)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+  const slug = `${baseSlug}-${Date.now().toString(36)}`;
+
+  // Create the client record first
+  const [newClient] = await db
+    .insert(clients)
+    .values({
+      name: fullName as string,
+      slug,
+      businessType: "physical",
+      status: "onboarding",
+    })
+    .returning({ id: clients.id });
+
+  // Create the user row linked to the new client
   await db.insert(users).values({
     email: authUser.email!,
     name: fullName,
     role: "client",
     authProviderId: authUser.id,
+    clientId: newClient.id,
   });
 
-  const onboardingUrl = redirect === "/overview" ? "/onboarding" : redirect;
+  // Create trial subscription
+  await db.insert(subscriptions).values({
+    clientId: newClient.id,
+    plan: "trial",
+    status: "trialing",
+    monitoringFrequency: "every_3_days",
+    monthlyFeeInr: 0,
+    trialEnd: new Date(Date.now() + 7 * 86400 * 1000),
+  });
+
+  const onboardingUrl = redirect === "/overview" ? "/select-plan" : redirect;
   const redirectResponse = NextResponse.redirect(`${origin}${onboardingUrl}`);
   response.cookies.getAll().forEach((cookie) => {
     redirectResponse.cookies.set(cookie.name, cookie.value);

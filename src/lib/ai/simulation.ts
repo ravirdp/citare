@@ -118,6 +118,26 @@ export class SimulationProvider implements AIProvider {
       });
       return waitForResponse<MultiLangContent>(promptId);
     },
+
+    async generateRecommendations(
+      kg: KnowledgeGraphData,
+      monitoringData: MonitoringData,
+      scores: Record<string, unknown>
+    ): Promise<Array<{
+      type: string;
+      priority: string;
+      title: string;
+      description: string;
+      actionData: Record<string, unknown>;
+    }>> {
+      const promptId = `recommendations-${(kg as unknown as Record<string, unknown>).clientId ?? "unknown"}`;
+      await writePrompt(promptId, {
+        task: "generate_recommendations",
+        tier: "strategist",
+        input: { kg, monitoringData, scores },
+      });
+      return waitForResponse(promptId);
+    },
   };
 
   worker = {

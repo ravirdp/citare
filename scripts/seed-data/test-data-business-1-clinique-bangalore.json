@@ -1,0 +1,597 @@
+{
+  "_meta": {
+    "description": "Test Business 1: CLINIQUE Internationale - Dr. Idris Hair Transplant & Facial Cosmetic Surgeon, JP Nagar, Bangalore",
+    "business_type": "physical",
+    "vertical": "healthcare / hair transplant / cosmetic surgery",
+    "data_period": "90 days — January 1 to March 22, 2026",
+    "monthly_ad_spend_approx": "₹3,20,000",
+    "notes": "Based on real business: Clinique Internationale, JP Nagar 2nd Phase, Bangalore. Data is imagined/simulated for testing purposes. Includes intentional imperfections: slight hours mismatch between Ads extensions and GBP, one service ranked organically but not advertised, competitor keywords revealing 4 competitors, reviews in Kannada and Hinglish.",
+    "seeding_instructions": "1) Create agency row (or use null for direct client). 2) Create client row with the client object below. 3) Create 4 data_sources rows, one per source, using client_id from step 2. Set raw_data to the corresponding object below."
+  },
+
+  "client": {
+    "name": "CLINIQUE Internationale - Dr. Idris",
+    "slug": "clinique-internationale-bangalore",
+    "business_type": "physical",
+    "status": "active",
+    "landmark_description": "Plot No 143, opposite JP Nagar Police Station, 7th Cross, 21st Main Road. 10 min auto from Jayanagar 4th Block. Near Ragigudda Temple. Easy access from Bannerghatta Road.",
+    "languages": ["en", "hi", "hinglish", "kn"],
+    "subscription_tier": "physical",
+    "monthly_fee_inr": 15000,
+    "metadata": {
+      "doctor_name": "Dr. Idris",
+      "qualifications": "BDS, MDS - Oral & Maxillofacial Surgery, PG Diploma in Aesthetic Cosmetology, Fellowship in Facial Aesthetics",
+      "affiliations": ["GM-Apollo Hospital Bangalore", "32 Smiles Chain Bangalore", "NSVK College Bangalore"]
+    }
+  },
+
+  "data_sources": {
+
+    "google_ads": {
+      "source_type": "google_ads",
+      "status": "active",
+      "sync_frequency_hours": 6,
+      "raw_data": {
+        "account_id": "345-678-9012",
+        "account_name": "Clinique Internationale - Bangalore",
+        "currency": "INR",
+        "date_range": { "start": "2026-01-01", "end": "2026-03-22" },
+        "total_spend_inr": 960000,
+        "total_impressions": 485000,
+        "total_clicks": 14200,
+        "total_conversions": 410,
+
+        "campaigns": [
+          {
+            "id": "camp_ht_001",
+            "name": "Hair Transplant - Bangalore City",
+            "status": "ENABLED",
+            "type": "SEARCH",
+            "budget_daily_inr": 5000,
+            "spend_total_inr": 405000,
+            "impressions": 198000,
+            "clicks": 5800,
+            "conversions": 145,
+            "geographic_targeting": ["Bangalore", "Bengaluru Urban", "Electronic City", "Whitefield", "Marathahalli", "Jayanagar", "JP Nagar", "Bannerghatta", "HSR Layout"],
+            "ad_groups": [
+              {
+                "id": "ag_ht_fue",
+                "name": "FUE Hair Transplant",
+                "keywords": [
+                  { "text": "hair transplant bangalore", "match_type": "PHRASE", "cpc_inr": 145, "impressions": 42000, "clicks": 1250, "conversions": 38, "spend_inr": 95000 },
+                  { "text": "best hair transplant surgeon bangalore", "match_type": "BROAD", "cpc_inr": 168, "impressions": 28000, "clicks": 820, "conversions": 22, "spend_inr": 72000 },
+                  { "text": "fue hair transplant cost bangalore", "match_type": "EXACT", "cpc_inr": 132, "impressions": 15000, "clicks": 580, "conversions": 18, "spend_inr": 52000 },
+                  { "text": "hair transplant jp nagar", "match_type": "PHRASE", "cpc_inr": 88, "impressions": 4500, "clicks": 210, "conversions": 12, "spend_inr": 18500 },
+                  { "text": "hair transplant near me bangalore", "match_type": "BROAD", "cpc_inr": 110, "impressions": 18000, "clicks": 520, "conversions": 14, "spend_inr": 42000 }
+                ],
+                "ad_copies": [
+                  {
+                    "headline1": "Best Hair Transplant in Bangalore",
+                    "headline2": "FUE by Dr. Idris - 10000+ Cases",
+                    "headline3": "Natural Results Guaranteed",
+                    "description1": "Advanced Micro FUE hair transplant by Dr. Idris. 15+ years experience. Performed on 10,000+ patients including 100s of doctors. Book free consultation.",
+                    "description2": "Painless FUE procedure. Walk-in same day. EMI available starting ₹5,000/month. USFDA approved technology. JP Nagar, Bangalore.",
+                    "landing_page": "https://www.hairclinique.in/hair-transplant-clinic-surgeon-bangalore-dr-idris.php",
+                    "extensions": {
+                      "callout": ["Free Consultation", "EMI Available", "10000+ Happy Patients", "USFDA Approved"],
+                      "sitelinks": [
+                        { "text": "FUE Hair Transplant", "url": "https://www.hairclinique.in/fue-hair-transplant-bangalore.php" },
+                        { "text": "Hair Transplant Cost", "url": "https://www.hairclinique.in/hair-transplant-cost-bangalore.php" },
+                        { "text": "Before & After Photos", "url": "https://www.hairclinique.in/gallery.php" },
+                        { "text": "Book Appointment", "url": "https://www.hairclinique.in/contact.php" }
+                      ],
+                      "location": "JP Nagar 2nd Phase, Bangalore",
+                      "phone": "+91-9876543210",
+                      "business_hours": "Mon-Sat: 10:00 AM - 7:00 PM"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "ag_ht_fut",
+                "name": "FUT Hair Transplant",
+                "keywords": [
+                  { "text": "fut hair transplant bangalore", "match_type": "PHRASE", "cpc_inr": 105, "impressions": 8000, "clicks": 280, "conversions": 9, "spend_inr": 24000 },
+                  { "text": "hair transplant strip method bangalore", "match_type": "BROAD", "cpc_inr": 78, "impressions": 3500, "clicks": 120, "conversions": 4, "spend_inr": 9200 }
+                ],
+                "ad_copies": [
+                  {
+                    "headline1": "FUT Hair Transplant Bangalore",
+                    "headline2": "Expert Surgeon Dr. Idris",
+                    "headline3": "Affordable Packages",
+                    "description1": "FUT strip method for maximum graft coverage. Ideal for advanced hair loss. Consultation with Dr. Idris at Clinique Internationale.",
+                    "description2": "Cost-effective FUT transplant. Natural hairline design. Recovery in 10-14 days. JP Nagar clinic.",
+                    "landing_page": "https://www.hairclinique.in/fut-hair-transplant-bangalore.php"
+                  }
+                ]
+              },
+              {
+                "id": "ag_ht_cost",
+                "name": "Hair Transplant Cost Queries",
+                "keywords": [
+                  { "text": "hair transplant cost in bangalore", "match_type": "EXACT", "cpc_inr": 155, "impressions": 35000, "clicks": 980, "conversions": 28, "spend_inr": 82000 },
+                  { "text": "hair transplant price per graft bangalore", "match_type": "PHRASE", "cpc_inr": 120, "impressions": 12000, "clicks": 420, "conversions": 12, "spend_inr": 38000 },
+                  { "text": "affordable hair transplant bangalore", "match_type": "BROAD", "cpc_inr": 92, "impressions": 9500, "clicks": 340, "conversions": 10, "spend_inr": 28000 },
+                  { "text": "cheapest hair transplant in bangalore", "match_type": "BROAD", "cpc_inr": 65, "impressions": 14000, "clicks": 480, "conversions": 5, "spend_inr": 22000 }
+                ],
+                "ad_copies": [
+                  {
+                    "headline1": "Hair Transplant ₹50-150/Graft",
+                    "headline2": "Bangalore's Most Trusted Clinic",
+                    "headline3": "EMI from ₹5000/month",
+                    "description1": "Transparent pricing. No hidden charges. Free consultation with Dr. Idris. Cost depends on grafts needed — typically ₹50,000 to ₹2,50,000.",
+                    "description2": "Compare our pricing with 10+ clinics in Bangalore. We offer the best value with senior surgeon performing every case.",
+                    "landing_page": "https://www.hairclinique.in/hair-transplant-cost-bangalore.php"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "camp_prp_002",
+            "name": "PRP & Non-Surgical Hair Loss",
+            "status": "ENABLED",
+            "type": "SEARCH",
+            "budget_daily_inr": 2000,
+            "spend_total_inr": 158000,
+            "impressions": 92000,
+            "clicks": 3200,
+            "conversions": 95,
+            "geographic_targeting": ["Bangalore", "JP Nagar", "Jayanagar", "BTM Layout", "HSR Layout", "Bannerghatta Road"],
+            "ad_groups": [
+              {
+                "id": "ag_prp",
+                "name": "PRP Treatment",
+                "keywords": [
+                  { "text": "prp treatment for hair bangalore", "match_type": "PHRASE", "cpc_inr": 62, "impressions": 22000, "clicks": 880, "conversions": 32, "spend_inr": 42000 },
+                  { "text": "prp hair treatment cost bangalore", "match_type": "EXACT", "cpc_inr": 55, "impressions": 15000, "clicks": 620, "conversions": 22, "spend_inr": 28000 },
+                  { "text": "platelet rich plasma hair therapy", "match_type": "BROAD", "cpc_inr": 48, "impressions": 8000, "clicks": 280, "conversions": 8, "spend_inr": 12000 }
+                ],
+                "ad_copies": [
+                  {
+                    "headline1": "PRP Hair Treatment Bangalore",
+                    "headline2": "Stop Hair Fall in 3 Sessions",
+                    "headline3": "₹4,500 Per Session",
+                    "description1": "Advanced PRP therapy for hair loss. Platelet Rich Plasma stimulates natural hair growth. No surgery, no downtime. Results in 3-6 months.",
+                    "description2": "GFC (Growth Factor Concentrate) also available. Consultation with Dr. Idris. Walk-in welcome at JP Nagar clinic.",
+                    "landing_page": "https://www.hairclinique.in/prp-hair-treatment-bangalore.php"
+                  }
+                ]
+              },
+              {
+                "id": "ag_hairfall",
+                "name": "General Hair Loss",
+                "keywords": [
+                  { "text": "hair fall treatment bangalore", "match_type": "PHRASE", "cpc_inr": 45, "impressions": 28000, "clicks": 920, "conversions": 18, "spend_inr": 35000 },
+                  { "text": "hair loss doctor bangalore", "match_type": "BROAD", "cpc_inr": 52, "impressions": 12000, "clicks": 380, "conversions": 10, "spend_inr": 18000 },
+                  { "text": "best hair specialist near me", "match_type": "BROAD", "cpc_inr": 38, "impressions": 7000, "clicks": 120, "conversions": 5, "spend_inr": 4500 }
+                ],
+                "ad_copies": [
+                  {
+                    "headline1": "Losing Hair? See Dr. Idris",
+                    "headline2": "Expert Hair Loss Diagnosis",
+                    "headline3": "Free First Consultation",
+                    "description1": "Comprehensive hair loss diagnosis. Trichoscopy analysis. Customized treatment plan - PRP, GFC, medication, or transplant based on your condition.",
+                    "description2": "Don't wait until it's too late. Early treatment saves your hair. Book now at Clinique Internationale, JP Nagar.",
+                    "landing_page": "https://www.hairclinique.in/hair-loss-treatment-bangalore.php"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "camp_cosmetic_003",
+            "name": "Facial Cosmetic Treatments",
+            "status": "ENABLED",
+            "type": "SEARCH",
+            "budget_daily_inr": 1500,
+            "spend_total_inr": 118000,
+            "impressions": 78000,
+            "clicks": 2400,
+            "conversions": 68,
+            "geographic_targeting": ["Bangalore", "JP Nagar", "Jayanagar", "Koramangala", "HSR Layout", "Bannerghatta"],
+            "ad_groups": [
+              {
+                "id": "ag_laser_hair_removal",
+                "name": "Laser Hair Removal",
+                "keywords": [
+                  { "text": "laser hair removal bangalore", "match_type": "PHRASE", "cpc_inr": 72, "impressions": 25000, "clicks": 780, "conversions": 28, "spend_inr": 42000 },
+                  { "text": "full body laser hair removal cost bangalore", "match_type": "EXACT", "cpc_inr": 85, "impressions": 10000, "clicks": 340, "conversions": 12, "spend_inr": 24000 },
+                  { "text": "permanent hair removal for women bangalore", "match_type": "BROAD", "cpc_inr": 58, "impressions": 8000, "clicks": 260, "conversions": 8, "spend_inr": 14000 }
+                ],
+                "ad_copies": [
+                  {
+                    "headline1": "Laser Hair Removal Bangalore",
+                    "headline2": "USFDA Approved Diode Laser",
+                    "headline3": "50% Off First Session",
+                    "description1": "Permanent laser hair removal for men & women. Soprano ICE technology. All skin types. Painless & safe. 6-8 sessions for best results.",
+                    "description2": "Full body, face, underarms, bikini area. Experienced female staff available. JP Nagar clinic. Book free patch test.",
+                    "landing_page": "https://www.hairclinique.in/laser-hair-removal-bangalore.php"
+                  }
+                ]
+              },
+              {
+                "id": "ag_facial_cosmetic",
+                "name": "Botox & Fillers",
+                "keywords": [
+                  { "text": "botox treatment bangalore", "match_type": "PHRASE", "cpc_inr": 95, "impressions": 12000, "clicks": 380, "conversions": 8, "spend_inr": 18000 },
+                  { "text": "dermal fillers bangalore", "match_type": "PHRASE", "cpc_inr": 88, "impressions": 8000, "clicks": 240, "conversions": 5, "spend_inr": 12000 },
+                  { "text": "lip filler cost bangalore", "match_type": "EXACT", "cpc_inr": 72, "impressions": 5000, "clicks": 180, "conversions": 4, "spend_inr": 8000 }
+                ],
+                "ad_copies": [
+                  {
+                    "headline1": "Botox & Fillers by Dr. Idris",
+                    "headline2": "Look Younger, Feel Confident",
+                    "headline3": "Certified Cosmetic Surgeon",
+                    "description1": "Expert Botox and dermal filler treatments. Lip enhancement, jawline contouring, anti-aging. Natural-looking results by fellowship-trained surgeon.",
+                    "description2": "FDA approved products only. 15+ years experience in facial aesthetics. Consultation ₹500 (adjustable against treatment).",
+                    "landing_page": "https://www.hairclinique.in/facial-cosmetic-treatments.php"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "camp_beard_004",
+            "name": "Beard & Eyebrow Transplant",
+            "status": "ENABLED",
+            "type": "SEARCH",
+            "budget_daily_inr": 1200,
+            "spend_total_inr": 95000,
+            "impressions": 55000,
+            "clicks": 1600,
+            "conversions": 42,
+            "geographic_targeting": ["Bangalore", "Bengaluru Urban"],
+            "ad_groups": [
+              {
+                "id": "ag_beard",
+                "name": "Beard Transplant",
+                "keywords": [
+                  { "text": "beard transplant bangalore", "match_type": "PHRASE", "cpc_inr": 82, "impressions": 18000, "clicks": 520, "conversions": 15, "spend_inr": 32000 },
+                  { "text": "beard hair transplant cost", "match_type": "BROAD", "cpc_inr": 68, "impressions": 12000, "clicks": 380, "conversions": 10, "spend_inr": 22000 },
+                  { "text": "patchy beard solution bangalore", "match_type": "BROAD", "cpc_inr": 42, "impressions": 8000, "clicks": 220, "conversions": 6, "spend_inr": 9000 }
+                ],
+                "ad_copies": [
+                  {
+                    "headline1": "Beard Transplant Bangalore",
+                    "headline2": "Get a Full, Natural Beard",
+                    "headline3": "FUE Technique by Dr. Idris",
+                    "description1": "Patchy beard? Thin beard? Get a full, masculine beard with FUE beard transplant. Natural results. Minimal downtime. Starting ₹40,000.",
+                    "description2": "Also offering eyebrow transplant and hairline reconstruction. Expert surgeon with 10,000+ transplant cases.",
+                    "landing_page": "https://www.hairclinique.in/beard-transplant-bangalore.php"
+                  }
+                ]
+              },
+              {
+                "id": "ag_eyebrow",
+                "name": "Eyebrow Transplant",
+                "keywords": [
+                  { "text": "eyebrow transplant bangalore", "match_type": "PHRASE", "cpc_inr": 75, "impressions": 6000, "clicks": 180, "conversions": 5, "spend_inr": 12000 },
+                  { "text": "eyebrow hair restoration", "match_type": "BROAD", "cpc_inr": 58, "impressions": 4000, "clicks": 120, "conversions": 3, "spend_inr": 6500 }
+                ],
+                "ad_copies": [
+                  {
+                    "headline1": "Eyebrow Transplant in Bangalore",
+                    "headline2": "Restore Natural Brows",
+                    "headline3": "Micro FUE Technique",
+                    "description1": "Permanent eyebrow restoration using micro FUE. Ideal for over-plucked, thin, or scarred eyebrows. Natural, dense results.",
+                    "landing_page": "https://www.hairclinique.in/eyebrow-transplant-bangalore.php"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "camp_brand_005",
+            "name": "Brand & Competitor Keywords",
+            "status": "ENABLED",
+            "type": "SEARCH",
+            "budget_daily_inr": 1500,
+            "spend_total_inr": 122000,
+            "impressions": 62000,
+            "clicks": 1800,
+            "conversions": 60,
+            "geographic_targeting": ["Bangalore"],
+            "ad_groups": [
+              {
+                "id": "ag_brand",
+                "name": "Brand Terms",
+                "keywords": [
+                  { "text": "clinique internationale bangalore", "match_type": "EXACT", "cpc_inr": 25, "impressions": 8500, "clicks": 620, "conversions": 28, "spend_inr": 12000 },
+                  { "text": "dr idris hair transplant", "match_type": "PHRASE", "cpc_inr": 32, "impressions": 6000, "clicks": 450, "conversions": 22, "spend_inr": 11500 },
+                  { "text": "clinique hair transplant jp nagar", "match_type": "BROAD", "cpc_inr": 28, "impressions": 3500, "clicks": 280, "conversions": 15, "spend_inr": 7200 }
+                ],
+                "ad_copies": [
+                  {
+                    "headline1": "Clinique Internationale Official",
+                    "headline2": "Dr. Idris - Hair Transplant Expert",
+                    "headline3": "Book Your Free Consultation",
+                    "description1": "Official website of Clinique Internationale. Dr. Idris - BDS, MDS, Fellowship in Facial Aesthetics. 15+ years. 10,000+ successful transplants.",
+                    "landing_page": "https://www.hairclinique.in/"
+                  }
+                ]
+              },
+              {
+                "id": "ag_competitors",
+                "name": "Competitor Terms",
+                "keywords": [
+                  { "text": "dr deepak devakar hair transplant", "match_type": "BROAD", "cpc_inr": 125, "impressions": 9000, "clicks": 85, "conversions": 2, "spend_inr": 10500 },
+                  { "text": "oliva clinic hair transplant bangalore", "match_type": "PHRASE", "cpc_inr": 110, "impressions": 12000, "clicks": 120, "conversions": 3, "spend_inr": 13000 },
+                  { "text": "hairsure clinic bangalore", "match_type": "BROAD", "cpc_inr": 95, "impressions": 7500, "clicks": 65, "conversions": 1, "spend_inr": 6200 },
+                  { "text": "dr sandeep mahapatra hair transplant bangalore", "match_type": "BROAD", "cpc_inr": 118, "impressions": 8000, "clicks": 72, "conversions": 2, "spend_inr": 8500 },
+                  { "text": "eugenix hair transplant bangalore", "match_type": "BROAD", "cpc_inr": 105, "impressions": 6500, "clicks": 55, "conversions": 1, "spend_inr": 5800 }
+                ],
+                "ad_copies": [
+                  {
+                    "headline1": "Looking for Hair Transplant?",
+                    "headline2": "Compare Before You Choose",
+                    "headline3": "Dr. Idris - 10000+ Cases",
+                    "description1": "Before you decide, compare results. Dr. Idris at Clinique Internationale has performed 10,000+ transplants. See our before/after gallery.",
+                    "landing_page": "https://www.hairclinique.in/gallery.php"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+
+        "audience_segments": [
+          { "name": "Males 25-45", "type": "DEMOGRAPHIC", "bid_modifier": 1.2 },
+          { "name": "In-Market: Hair Care", "type": "IN_MARKET", "bid_modifier": 1.15 },
+          { "name": "In-Market: Cosmetic Procedures", "type": "IN_MARKET", "bid_modifier": 1.1 },
+          { "name": "Females 22-40", "type": "DEMOGRAPHIC", "bid_modifier": 0.9 }
+        ]
+      }
+    },
+
+    "gbp": {
+      "source_type": "gbp",
+      "status": "active",
+      "sync_frequency_hours": 12,
+      "raw_data": {
+        "business_name": "CLINIQUE - Internationale",
+        "place_id": "ChIJx6z_fakTrjsRmZ8uFvEVNwA",
+        "address": {
+          "street": "Plot No 143, 7th Cross, 21st Main Road",
+          "area": "JP Nagar 2nd Phase",
+          "city": "Bangalore",
+          "state": "Karnataka",
+          "pin": "560078",
+          "country": "IN",
+          "coordinates": { "lat": 12.9082, "lng": 77.5856 }
+        },
+        "phone": "+91-9876543210",
+        "website": "https://www.hairclinique.in/",
+        "primary_category": "Hair Transplant Clinic",
+        "secondary_categories": ["Cosmetic Surgeon", "Hair Care Clinic", "Skin Care Clinic"],
+        "description": "Clinique Internationale is a leading hair transplant and facial cosmetic clinic in Bangalore, founded by Dr. Idris. We specialize in FUE and FUT hair transplant surgery, PRP therapy, laser hair removal, and facial cosmetic procedures including Botox and dermal fillers. Dr. Idris is a BDS, MDS qualified Oral & Maxillofacial Surgeon with a Fellowship in Facial Aesthetics, having performed over 10,000 successful hair transplant procedures. Our clinic uses USFDA approved technology and follows international standards of care.",
+        "hours": {
+          "monday": { "open": "10:00", "close": "19:00" },
+          "tuesday": { "open": "10:00", "close": "19:00" },
+          "wednesday": { "open": "10:00", "close": "19:00" },
+          "thursday": { "open": "10:00", "close": "19:00" },
+          "friday": { "open": "10:00", "close": "19:00" },
+          "saturday": { "open": "10:00", "close": "17:00" },
+          "sunday": { "open": null, "close": null, "note": "Closed" }
+        },
+        "special_hours": [
+          { "date": "2026-01-26", "open": null, "close": null, "note": "Closed - Republic Day" },
+          { "date": "2026-03-14", "open": "10:00", "close": "14:00", "note": "Holi - reduced hours" }
+        ],
+        "services": [
+          { "name": "FUE Hair Transplant", "description": "Follicular Unit Extraction - minimally invasive hair transplant technique", "price_range": "₹50,000 - ₹2,50,000" },
+          { "name": "FUT Hair Transplant", "description": "Follicular Unit Transplantation - strip method for maximum graft coverage", "price_range": "₹40,000 - ₹1,80,000" },
+          { "name": "Beard Transplant", "description": "FUE technique for patchy or thin beards", "price_range": "₹40,000 - ₹1,20,000" },
+          { "name": "Eyebrow Transplant", "description": "Micro FUE for eyebrow restoration", "price_range": "₹30,000 - ₹80,000" },
+          { "name": "Hairline Reconstruction", "description": "Redesigning natural hairline using advanced FUE", "price_range": "₹60,000 - ₹2,00,000" },
+          { "name": "PRP Therapy", "description": "Platelet Rich Plasma treatment for hair fall", "price_range": "₹4,500 per session" },
+          { "name": "GFC Hair Treatment", "description": "Growth Factor Concentrate therapy for hair growth", "price_range": "₹6,000 per session" },
+          { "name": "Laser Hair Removal", "description": "USFDA approved permanent hair reduction for all body parts", "price_range": "₹2,000 - ₹15,000 per session" },
+          { "name": "Botox Treatment", "description": "Anti-wrinkle botulinum toxin injections", "price_range": "₹8,000 - ₹25,000" },
+          { "name": "Dermal Fillers", "description": "Lip augmentation, jawline contouring, cheek enhancement", "price_range": "₹15,000 - ₹40,000" },
+          { "name": "Cyclic Vitamin Therapy", "description": "IV vitamin infusion for hair health", "price_range": "₹3,500 per session" },
+          { "name": "Trichoscopy Analysis", "description": "Advanced scalp and hair diagnostic examination", "price_range": "₹500" }
+        ],
+        "attributes": [
+          "wheelchair_accessible_entrance",
+          "wheelchair_accessible_restroom",
+          "accepts_credit_cards",
+          "accepts_debit_cards",
+          "accepts_upi",
+          "free_wifi",
+          "by_appointment_only_no",
+          "gender_neutral_restroom",
+          "air_conditioned",
+          "parking_available_nearby"
+        ],
+        "photos": [
+          { "url": "https://lh3.googleusercontent.com/p/AF1QipN_clinic_exterior", "type": "EXTERIOR", "description": "Clinic entrance" },
+          { "url": "https://lh3.googleusercontent.com/p/AF1QipN_reception", "type": "INTERIOR", "description": "Reception area" },
+          { "url": "https://lh3.googleusercontent.com/p/AF1QipN_ot", "type": "INTERIOR", "description": "Operation theatre" },
+          { "url": "https://lh3.googleusercontent.com/p/AF1QipN_dr_idris", "type": "TEAM", "description": "Dr. Idris" },
+          { "url": "https://lh3.googleusercontent.com/p/AF1QipN_before_after1", "type": "ADDITIONAL", "description": "Before/After - Hair Transplant" },
+          { "url": "https://lh3.googleusercontent.com/p/AF1QipN_before_after2", "type": "ADDITIONAL", "description": "Before/After - Beard Transplant" }
+        ],
+        "reviews": [
+          { "author": "Rahul M", "rating": 5, "text": "Amazing experience! Dr Idris is extremely professional and skilled. I got FUE done 8 months ago and the results are incredible. My hairline looks completely natural. Travelled from Hyderabad specifically for this.", "date": "2026-03-15", "reply": "Thank you Rahul! Delighted to see your transformation. Please share your 12-month photos with us." },
+          { "author": "Priya S", "rating": 5, "text": "Got laser hair removal done. Very happy with results after 5 sessions. The staff is very professional and Dr Idris personally checks before every session. Clinic is clean and well-maintained. Opposite JP Nagar police station, easy to find.", "date": "2026-03-08", "reply": "Thank you Priya! Glad you're seeing great results." },
+          { "author": "Vikram K", "rating": 4, "text": "Good clinic for PRP treatment. Had 4 sessions so far and seeing improvement in hair thickness. Only issue is parking is a bit difficult in the area. Otherwise excellent treatment and friendly staff.", "date": "2026-02-28", "reply": null },
+          { "author": "Arun Reddy", "rating": 5, "text": "Best hair transplant surgeon in Bangalore! After visiting 10+ clinics across the city, I chose Clinique and it was the right decision. Dr Idris did 3000 grafts FUE, very comfortable procedure. Now 6 months in and I look like a different person.", "date": "2026-02-20", "reply": "Thank you Arun! Your 6-month results are truly outstanding. See you for the 12-month follow-up!" },
+          { "author": "Mohammed Aziz", "rating": 5, "text": "Had beard transplant done by Dr Idris. My patchy beard is now full and looks very natural. The procedure took about 5 hours, and Dr Idris himself did every graft. Very impressed with the attention to detail.", "date": "2026-02-15", "reply": null },
+          { "author": "Sneha R", "rating": 5, "text": "Excellent eyebrow transplant! Lost my eyebrow hair due to over-threading. Dr Idris restored them beautifully. The micro FUE technique gives very natural results. Female staff was very supportive during the procedure.", "date": "2026-02-05", "reply": "Thank you Sneha! Your eyebrow restoration turned out beautifully." },
+          { "author": "Suresh Gowda", "rating": 3, "text": "Treatment is good but the wait time is long. My appointment was at 11 but I was taken in at 12:15. The PRP treatment itself was quick and professional. Dr Idris is knowledgeable but the scheduling needs improvement.", "date": "2026-01-28", "reply": "We apologize for the wait, Suresh. We are working on improving our scheduling. Thank you for your patience." },
+          { "author": "Kiran Basavaraj", "rating": 5, "text": "ಡಾ. ಇದ್ರೀಸ್ ಅವರ ಕೆಲಸ ಅತ್ಯುತ್ತಮ. ನನ್ನ ಕೂದಲು ಕಸಿ ಚಿಕಿತ್ಸೆ ಬಹಳ ಚೆನ್ನಾಗಿ ಆಗಿದೆ. 3 ತಿಂಗಳಲ್ಲಿ ಹೊಸ ಕೂದಲು ಬೆಳೆಯಲು ಶುರುವಾಗಿದೆ. (Translation: Dr. Idris's work is excellent. My hair transplant treatment went very well. New hair started growing in 3 months.)", "date": "2026-01-20", "reply": null },
+          { "author": "Rajesh Nair", "rating": 5, "text": "Came from Kerala for hair transplant. Totally worth the travel. Dr Idris is artist-level surgeon. Very natural hairline design. Staff arranged hotel near clinic which was helpful. Would recommend to anyone in South India.", "date": "2026-01-15", "reply": "Thank you Rajesh! We're glad we could make the travel convenient for you." },
+          { "author": "Deepak Sharma", "rating": 4, "text": "Bahut accha experience tha. Dr Idris ne sab detail mein explain kiya transplant ke baare mein. Cost bhi reasonable hai compared to Delhi clinics. Mera 2500 grafts hua hai, ab 4 month ho gaye, results aa rahe hain. (Very good experience. Dr Idris explained everything in detail. Cost is reasonable compared to Delhi clinics. I had 2500 grafts, 4 months now, results are coming.)", "date": "2026-01-10", "reply": null },
+          { "author": "Anjali Verma", "rating": 5, "text": "Got Botox from Dr Idris for forehead lines. Very subtle and natural result. He is conservative in his approach which I appreciate - doesn't overdo it. The consultation was thorough and honest.", "date": "2026-01-05", "reply": null },
+          { "author": "Siddharth Rao", "rating": 5, "text": "Best clinic near JP Nagar for hair problems. I was losing hair rapidly and tried many shampoos and oils. Dr Idris diagnosed my condition properly with trichoscopy and started me on PRP + medication. After 6 months I have visible regrowth.", "date": "2025-12-28", "reply": null },
+          { "author": "Meena Krishnamurthy", "rating": 4, "text": "Good laser hair removal clinic. Completed 6 sessions for underarms and arms. Almost 90% reduction. A bit expensive compared to some other places but the technology is clearly better - Soprano ICE is painless.", "date": "2025-12-20", "reply": null },
+          { "author": "Imran Sheikh", "rating": 5, "text": "Dr Idris bhai bahut acche surgeon hai. Maine Delhi, Mumbai aur Bangalore mein consult kiya tha, unki understanding aur artistry sabse best lagi. Hair transplant ka result dekhke log puchte hai ki kya natural hai. (Dr Idris is a very good surgeon. I consulted in Delhi, Mumbai, and Bangalore - his understanding and artistry seemed the best. People ask if my hair transplant is natural when they see the result.)", "date": "2025-12-15", "reply": "Thank you Imran bhai! Natural-looking results are what we strive for." },
+          { "author": "Naveen Kumar", "rating": 2, "text": "The doctor is good but the front desk management is poor. Had to call multiple times to confirm my appointment. Also the post-transplant follow-up instructions were only given verbally, nothing in writing. Would appreciate better documentation.", "date": "2025-12-08", "reply": "We appreciate your honest feedback Naveen. We are implementing a digital follow-up kit for all patients. Thank you for helping us improve." }
+        ],
+        "aggregate_rating": 4.5,
+        "total_reviews": 366,
+        "qanda": [
+          { "question": "What is the cost of hair transplant at Clinique?", "answer": "Hair transplant at Clinique costs between ₹50 to ₹150 per graft depending on the technique (FUE/FUT). Total cost typically ranges from ₹50,000 to ₹2,50,000. We offer free consultation where Dr. Idris will examine and give you an exact quote." },
+          { "question": "Does Dr. Idris himself perform the surgery?", "answer": "Yes, Dr. Idris personally performs every hair transplant procedure. From designing the hairline to extracting and placing each graft, Dr. Idris is involved throughout the surgery." },
+          { "question": "Is EMI available for hair transplant?", "answer": "Yes, we offer EMI options starting from ₹5,000 per month through multiple banking partners. No-cost EMI is available for select credit cards." },
+          { "question": "How long does a hair transplant take?", "answer": "The procedure takes 6-8 hours depending on the number of grafts. It's done under local anesthesia and patients can watch movies or listen to music during the procedure." },
+          { "question": "What is the recovery time after FUE?", "answer": "Most patients can return to work in 3-5 days. The transplanted area heals within 7-10 days. New hair growth starts at 3 months and full results are visible at 10-12 months." }
+        ],
+        "posts": [
+          { "type": "OFFER", "text": "🎉 New Year Special! Get 20% off on FUE Hair Transplant booked in January 2026. Free PRP session included. Limited slots. Book now!", "date": "2026-01-02", "cta": "BOOK" },
+          { "type": "UPDATE", "text": "Proud to announce our 10,000th successful hair transplant procedure! Thank you to all our patients for trusting Clinique Internationale. Here's to many more transformations! 🎊", "date": "2026-02-14", "cta": null },
+          { "type": "EVENT", "text": "Free Hair Loss Awareness Camp on March 8, 2026 (International Women's Day). Free trichoscopy analysis and consultation for women experiencing hair thinning. Walk-in between 10am-2pm.", "date": "2026-03-01", "cta": "LEARN_MORE" }
+        ],
+        "insights": {
+          "jan_2026": { "phone_calls": 285, "direction_requests": 190, "website_clicks": 420 },
+          "feb_2026": { "phone_calls": 310, "direction_requests": 215, "website_clicks": 465 },
+          "mar_2026_partial": { "phone_calls": 245, "direction_requests": 168, "website_clicks": 380 }
+        }
+      }
+    },
+
+    "search_console": {
+      "source_type": "search_console",
+      "status": "active",
+      "sync_frequency_hours": 24,
+      "raw_data": {
+        "site_url": "https://www.hairclinique.in/",
+        "date_range": { "start": "2026-01-01", "end": "2026-03-19" },
+
+        "queries": [
+          { "query": "hair transplant bangalore", "impressions": 38500, "clicks": 1850, "ctr": 0.048, "position": 4.2 },
+          { "query": "best hair transplant surgeon bangalore", "impressions": 22000, "clicks": 920, "ctr": 0.042, "position": 5.8 },
+          { "query": "fue hair transplant cost bangalore", "impressions": 14500, "clicks": 680, "ctr": 0.047, "position": 3.9 },
+          { "query": "clinique internationale bangalore", "impressions": 7200, "clicks": 5800, "ctr": 0.806, "position": 1.0 },
+          { "query": "dr idris hair transplant", "impressions": 5500, "clicks": 4200, "ctr": 0.764, "position": 1.1 },
+          { "query": "hair transplant cost in bangalore", "impressions": 28000, "clicks": 980, "ctr": 0.035, "position": 6.5 },
+          { "query": "prp treatment for hair bangalore", "impressions": 12000, "clicks": 420, "ctr": 0.035, "position": 7.2 },
+          { "query": "laser hair removal bangalore", "impressions": 18000, "clicks": 380, "ctr": 0.021, "position": 12.5 },
+          { "query": "beard transplant bangalore", "impressions": 9500, "clicks": 520, "ctr": 0.055, "position": 3.4 },
+          { "query": "hair transplant before after bangalore", "impressions": 8000, "clicks": 620, "ctr": 0.078, "position": 2.8 },
+          { "query": "eyebrow transplant bangalore", "impressions": 4200, "clicks": 280, "ctr": 0.067, "position": 4.1 },
+          { "query": "hair fall treatment bangalore", "impressions": 15000, "clicks": 320, "ctr": 0.021, "position": 14.2 },
+          { "query": "botox bangalore", "impressions": 6500, "clicks": 85, "ctr": 0.013, "position": 18.5 },
+          { "query": "gfc hair treatment bangalore", "impressions": 3800, "clicks": 290, "ctr": 0.076, "position": 3.2 },
+          { "query": "hair transplant jp nagar", "impressions": 2800, "clicks": 380, "ctr": 0.136, "position": 1.8 },
+          { "query": "scalp micropigmentation bangalore", "impressions": 5200, "clicks": 180, "ctr": 0.035, "position": 8.5 },
+          { "query": "hair transplant emi bangalore", "impressions": 4500, "clicks": 210, "ctr": 0.047, "position": 5.2 },
+          { "query": "female hair transplant bangalore", "impressions": 6800, "clicks": 240, "ctr": 0.035, "position": 9.8 },
+          { "query": "hair loss doctor near me bangalore", "impressions": 9200, "clicks": 180, "ctr": 0.020, "position": 15.2 },
+          { "query": "robotic hair transplant bangalore", "impressions": 3200, "clicks": 95, "ctr": 0.030, "position": 11.2 },
+          { "query": "dermal fillers bangalore", "impressions": 4800, "clicks": 62, "ctr": 0.013, "position": 22.0 },
+          { "query": "hair transplant surgery video bangalore", "impressions": 2200, "clicks": 180, "ctr": 0.082, "position": 3.5 },
+          { "query": "best prp for hair loss", "impressions": 7500, "clicks": 150, "ctr": 0.020, "position": 16.8 },
+          { "query": "hair graft cost india", "impressions": 12000, "clicks": 280, "ctr": 0.023, "position": 8.9 },
+          { "query": "hair transplant jayanagar bangalore", "impressions": 1800, "clicks": 145, "ctr": 0.081, "position": 2.2 }
+        ],
+
+        "pages": [
+          { "url": "https://www.hairclinique.in/", "impressions": 85000, "clicks": 4800, "ctr": 0.056, "position": 5.2 },
+          { "url": "https://www.hairclinique.in/hair-transplant-clinic-surgeon-bangalore-dr-idris.php", "impressions": 42000, "clicks": 2800, "ctr": 0.067, "position": 4.1 },
+          { "url": "https://www.hairclinique.in/hair-transplant-cost-bangalore.php", "impressions": 35000, "clicks": 1900, "ctr": 0.054, "position": 5.8 },
+          { "url": "https://www.hairclinique.in/fue-hair-transplant-bangalore.php", "impressions": 18000, "clicks": 1200, "ctr": 0.067, "position": 4.5 },
+          { "url": "https://www.hairclinique.in/beard-transplant-bangalore.php", "impressions": 12000, "clicks": 680, "ctr": 0.057, "position": 3.8 },
+          { "url": "https://www.hairclinique.in/prp-hair-treatment-bangalore.php", "impressions": 9500, "clicks": 420, "ctr": 0.044, "position": 6.8 },
+          { "url": "https://www.hairclinique.in/laser-hair-removal-bangalore.php", "impressions": 15000, "clicks": 380, "ctr": 0.025, "position": 11.2 },
+          { "url": "https://www.hairclinique.in/gallery.php", "impressions": 8500, "clicks": 720, "ctr": 0.085, "position": 3.2 },
+          { "url": "https://www.hairclinique.in/Dr-Idris.php", "impressions": 6000, "clicks": 1800, "ctr": 0.300, "position": 1.5 },
+          { "url": "https://www.hairclinique.in/blog/hair-transplant-treatment-jp-nagar/", "impressions": 4200, "clicks": 320, "ctr": 0.076, "position": 4.8 }
+        ]
+      }
+    },
+
+    "analytics": {
+      "source_type": "analytics",
+      "status": "active",
+      "sync_frequency_hours": 24,
+      "raw_data": {
+        "property_id": "GA4-987654321",
+        "date_range": { "start": "2026-01-01", "end": "2026-03-22" },
+
+        "top_pages": [
+          { "url": "/", "sessions": 12500, "bounce_rate": 0.42, "avg_time_seconds": 85 },
+          { "url": "/hair-transplant-clinic-surgeon-bangalore-dr-idris.php", "sessions": 8200, "bounce_rate": 0.35, "avg_time_seconds": 145 },
+          { "url": "/hair-transplant-cost-bangalore.php", "sessions": 6800, "bounce_rate": 0.38, "avg_time_seconds": 120 },
+          { "url": "/fue-hair-transplant-bangalore.php", "sessions": 4500, "bounce_rate": 0.40, "avg_time_seconds": 135 },
+          { "url": "/gallery.php", "sessions": 3800, "bounce_rate": 0.28, "avg_time_seconds": 195 },
+          { "url": "/beard-transplant-bangalore.php", "sessions": 2200, "bounce_rate": 0.36, "avg_time_seconds": 110 },
+          { "url": "/prp-hair-treatment-bangalore.php", "sessions": 2000, "bounce_rate": 0.45, "avg_time_seconds": 92 },
+          { "url": "/laser-hair-removal-bangalore.php", "sessions": 1800, "bounce_rate": 0.48, "avg_time_seconds": 78 },
+          { "url": "/contact.php", "sessions": 3200, "bounce_rate": 0.22, "avg_time_seconds": 65 },
+          { "url": "/Dr-Idris.php", "sessions": 2800, "bounce_rate": 0.30, "avg_time_seconds": 110 },
+          { "url": "/facial-cosmetic-treatments.php", "sessions": 1200, "bounce_rate": 0.52, "avg_time_seconds": 68 },
+          { "url": "/eyebrow-transplant-bangalore.php", "sessions": 900, "bounce_rate": 0.38, "avg_time_seconds": 95 },
+          { "url": "/blog/hair-transplant-treatment-jp-nagar/", "sessions": 1500, "bounce_rate": 0.55, "avg_time_seconds": 180 }
+        ],
+
+        "traffic_sources": {
+          "jan_2026": { "organic_search": 0.38, "paid_search": 0.35, "direct": 0.18, "social": 0.05, "referral": 0.04 },
+          "feb_2026": { "organic_search": 0.36, "paid_search": 0.37, "direct": 0.19, "social": 0.04, "referral": 0.04 },
+          "mar_2026": { "organic_search": 0.35, "paid_search": 0.36, "direct": 0.21, "social": 0.04, "referral": 0.04 }
+        },
+
+        "geographic": [
+          { "city": "Bangalore", "sessions": 28500, "percentage": 0.58 },
+          { "city": "Hyderabad", "sessions": 4200, "percentage": 0.085 },
+          { "city": "Chennai", "sessions": 3100, "percentage": 0.063 },
+          { "city": "Mumbai", "sessions": 2800, "percentage": 0.057 },
+          { "city": "Mysore", "sessions": 1900, "percentage": 0.039 },
+          { "city": "Mangalore", "sessions": 1200, "percentage": 0.024 },
+          { "city": "Pune", "sessions": 1100, "percentage": 0.022 },
+          { "city": "Delhi", "sessions": 980, "percentage": 0.020 },
+          { "city": "Kochi", "sessions": 850, "percentage": 0.017 },
+          { "city": "Hubli", "sessions": 620, "percentage": 0.013 }
+        ],
+
+        "branded_search_trend": {
+          "jan_2026": { "sessions_from_branded": 1850, "branded_queries": ["clinique internationale", "dr idris hair transplant", "clinique bangalore", "hairclinique.in"] },
+          "feb_2026": { "sessions_from_branded": 2100, "branded_queries": ["clinique internationale", "dr idris hair transplant", "clinique bangalore", "dr idris bangalore"] },
+          "mar_2026_partial": { "sessions_from_branded": 1680, "branded_queries": ["clinique internationale", "dr idris", "clinique jp nagar", "dr idris reviews"] }
+        },
+
+        "landing_page_conversions": [
+          { "url": "/contact.php", "goal_completions": 380, "sessions": 3200, "conversion_rate": 0.119 },
+          { "url": "/hair-transplant-clinic-surgeon-bangalore-dr-idris.php", "goal_completions": 245, "sessions": 8200, "conversion_rate": 0.030 },
+          { "url": "/hair-transplant-cost-bangalore.php", "goal_completions": 198, "sessions": 6800, "conversion_rate": 0.029 },
+          { "url": "/", "goal_completions": 165, "sessions": 12500, "conversion_rate": 0.013 },
+          { "url": "/fue-hair-transplant-bangalore.php", "goal_completions": 142, "sessions": 4500, "conversion_rate": 0.032 }
+        ]
+      }
+    }
+  },
+
+  "_test_patterns": {
+    "intentional_imperfections": [
+      "Google Ads extension shows hours as Mon-Sat 10:00 AM - 7:00 PM, but GBP shows Saturday closing at 5:00 PM (17:00). This is a CONFLICT the system should detect.",
+      "Scalp micropigmentation ranks organically (position 8.5) in Search Console but has ZERO ad spend — this is a service they offer but don't advertise. The system should flag this as a discovery/opportunity.",
+      "Dermal fillers ranks at position 22 organically and has low ad spend — an underperforming service that the system should note.",
+      "Facial cosmetic treatments page has highest bounce rate (52%) — system should detect content quality issue.",
+      "Review from Naveen Kumar is 2-star — the only negative review. System should extract specific complaints (poor front desk, lack of written instructions).",
+      "Reviews in Kannada (Kiran Basavaraj) and Hinglish (Deepak Sharma, Imran Sheikh) — system should detect multi-language review content.",
+      "Direct traffic increasing month-over-month (18% → 19% → 21%) — potential signal of growing brand awareness or AI search mentions driving direct visits.",
+      "Branded search sessions also trending up — correlation with potential AI search visibility.",
+      "Visitors from Hyderabad, Chennai, Mumbai, Kerala — confirms hair transplant is a city-wide/regional planned decision, not a local impulse decision.",
+      "GFC treatment appears in GBP services and ranks well organically (position 3.2) but has no dedicated ad campaign — another discovery opportunity."
+    ],
+    "decision_radius_expectations": {
+      "FUE/FUT Hair Transplant": "planned — visitors from 10+ cities, high CPC, people travel from other states",
+      "Beard Transplant": "planned — city-wide, lower CPC but still a planned procedure",
+      "Eyebrow Transplant": "planned — niche, city-wide",
+      "PRP Therapy": "considered — local to Bangalore, moderate CPC, repeat visits needed",
+      "GFC Treatment": "considered — similar to PRP",
+      "Laser Hair Removal": "considered — local, multiple sessions, convenience matters",
+      "Botox/Fillers": "considered — local, repeat treatments",
+      "Trichoscopy": "impulse — low cost, often walk-in diagnostic",
+      "Cyclic Vitamin Therapy": "impulse — add-on to existing treatment"
+    },
+    "expected_competitors": [
+      "Dr. Deepak Devakar (from competitor keywords)",
+      "Oliva Clinic (from competitor keywords)",
+      "HairSure Clinic (from competitor keywords)",
+      "Dr. Sandeep Mahapatra (from competitor keywords)",
+      "Eugenix Hair Transplant (from competitor keywords)"
+    ]
+  }
+}

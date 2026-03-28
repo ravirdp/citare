@@ -1,8 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth/user";
-import { getRedis } from "@/lib/queue/client";
-
-const REDIS_KEY = "citare:config:model_routing";
 
 const DEFAULT_CONFIG = {
   tier_one: "claude-opus-4-0-20250514",
@@ -44,27 +41,8 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const redis = getRedis();
-  if (!redis) {
-    return NextResponse.json(
-      { success: false, error: "Redis not configured. Using default settings." },
-      { status: 200 }
-    );
-  }
-
-  try {
-    const body = await request.json();
-    const current = await redis.get<typeof DEFAULT_CONFIG>(REDIS_KEY);
-    const merged = { ...(current ?? DEFAULT_CONFIG), ...body };
-
-    await redis.set(REDIS_KEY, merged);
-
-    return NextResponse.json({ config: merged });
-  } catch (err) {
-    console.error("Model routing POST error:", err);
-    return NextResponse.json(
-      { error: "Failed to update model routing" },
-      { status: 500 }
-    );
-  }
+  return NextResponse.json(
+    { success: false, error: "Redis not configured. Using default settings." },
+    { status: 200 }
+  );
 }
