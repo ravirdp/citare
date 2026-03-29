@@ -3,6 +3,8 @@ import { blogPosts } from "@/lib/db/schema";
 import { eq, lte, and, desc } from "drizzle-orm";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 export default async function BlogPage() {
   let posts: {
     title: string;
