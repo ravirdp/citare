@@ -1,3 +1,5 @@
+import { PublicNavbar } from "@/components/public/navbar";
+
 export default function Home() {
   const organizationSchema = {
     "@context": "https://schema.org",
@@ -37,65 +39,7 @@ export default function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
       />
 
-      {/* Navigation */}
-      <nav
-        className="fixed top-0 right-0 left-0 z-50"
-        style={{ background: "var(--bg-primary)", borderBottom: "1px solid var(--border-subtle)" }}
-      >
-        <div className="mx-auto flex max-w-[1200px] items-center justify-between px-6 py-4">
-          <a
-            href="/"
-            className="text-xl font-bold tracking-[0.05em] uppercase"
-            style={{ color: "var(--text-primary)" }}
-          >
-            C<span style={{ color: "var(--accent-primary)" }}>i</span>tare
-          </a>
-          <div className="flex items-center gap-8">
-            <a
-              href="/audit"
-              className="text-sm"
-              style={{ color: "var(--text-secondary)" }}
-            >
-              Free Audit
-            </a>
-            <a
-              href="/pricing"
-              className="text-sm"
-              style={{ color: "var(--text-secondary)" }}
-            >
-              Pricing
-            </a>
-            <a
-              href="/about"
-              className="text-sm"
-              style={{ color: "var(--text-secondary)" }}
-            >
-              About
-            </a>
-            <a
-              href="/blog"
-              className="text-sm"
-              style={{ color: "var(--text-secondary)" }}
-            >
-              Blog
-            </a>
-            <a
-              href="/contact"
-              className="text-sm"
-              style={{ color: "var(--text-secondary)" }}
-            >
-              Contact
-            </a>
-            <a
-              href="/login"
-              className="text-sm"
-              style={{ color: "var(--text-secondary)" }}
-            >
-              Login
-            </a>
-          </div>
-        </div>
-      </nav>
+      <PublicNavbar />
 
       {/* Hero */}
       <section className="px-6 pt-40 pb-24">

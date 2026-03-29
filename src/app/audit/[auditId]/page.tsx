@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import type { AuditReport } from "@/lib/analysis/types";
+import { PublicNavbar } from "@/components/public/navbar";
 
 function ScoreRing({ score, size = 120 }: { score: number; size?: number }) {
   const radius = (size - 12) / 2;
@@ -181,21 +182,13 @@ export default function AuditReportPage() {
         minHeight: "100vh",
         background: "var(--bg-primary)",
         padding: "40px 24px",
+        paddingTop: 80,
       }}
     >
+      <PublicNavbar active="/audit" />
       <div style={{ maxWidth: 800, margin: "0 auto" }}>
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: 40 }}>
-          <div
-            style={{
-              fontSize: 24,
-              fontWeight: 700,
-              color: "var(--accent-primary)",
-              marginBottom: 4,
-            }}
-          >
-            Citare
-          </div>
           <h1
             style={{
               fontSize: "var(--text-xl)",

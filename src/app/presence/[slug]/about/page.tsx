@@ -35,6 +35,16 @@ export default async function AboutPage({
       <article className="prose prose-gray max-w-none">
         <MarkdownRenderer content={markdown} />
       </article>
+      <footer style={{ marginTop: 48, paddingTop: 16, borderTop: "1px solid #e5e7eb", textAlign: "center" }}>
+        <a
+          href="https://www.citare.ai"
+          target="_blank"
+          rel="noopener"
+          style={{ fontSize: 12, color: "#9ca3af", textDecoration: "none" }}
+        >
+          Powered by Citare &mdash; AI Search Intelligence
+        </a>
+      </footer>
     </>
   );
 }

@@ -22,6 +22,16 @@ export default async function FAQPage({
   return (
     <article className="faq-page">
       <div dangerouslySetInnerHTML={{ __html: faqHtml }} />
+      <footer style={{ marginTop: 48, paddingTop: 16, borderTop: "1px solid #e5e7eb", textAlign: "center" }}>
+        <a
+          href="https://www.citare.ai"
+          target="_blank"
+          rel="noopener"
+          style={{ fontSize: 12, color: "#9ca3af", textDecoration: "none" }}
+        >
+          Powered by Citare &mdash; AI Search Intelligence
+        </a>
+      </footer>
       <style>{`
         .faq-page details {
           border-bottom: 1px solid #e5e7eb;

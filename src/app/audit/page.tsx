@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import { PublicNavbar } from "@/components/public/navbar";
 
 function AuditForm() {
   const router = useRouter();
@@ -81,18 +82,8 @@ function AuditForm() {
         padding: 24,
       }}
     >
+      <PublicNavbar active="/audit" />
       <div style={{ maxWidth: 560, width: "100%", textAlign: "center" }}>
-        <div
-          style={{
-            fontSize: 32,
-            fontWeight: 700,
-            letterSpacing: "-0.02em",
-            color: "var(--accent-primary)",
-            marginBottom: 8,
-          }}
-        >
-          Citare
-        </div>
         <h1
           style={{
             fontSize: "var(--text-xl)",
