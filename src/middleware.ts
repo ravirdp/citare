@@ -2,10 +2,10 @@ import { type NextRequest, NextResponse } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 
 const PUBLIC_ROUTES = ["/", "/login", "/signup", "/callback", "/audit", "/about", "/contact", "/privacy", "/pricing", "/blog"];
-const PUBLIC_PREFIXES = ["/api/auth/", "/api/webhook/", "/api/billing/webhook", "/presence/", "/audit/", "/api/audit/", "/auth/callback", "/api/contact/", "/llms.txt"];
+const PUBLIC_PREFIXES = ["/api/auth/", "/api/webhook/", "/api/billing/webhook", "/presence/", "/audit/", "/api/audit/", "/auth/callback", "/api/contact/", "/llms.txt", "/api/blog", "/blog/"];
 
 // Admin-only paths (super_admin required)
-const ADMIN_PATHS = ["/clients", "/agencies", "/subscriptions", "/health", "/costs"];
+const ADMIN_PATHS = ["/clients", "/agencies", "/subscriptions", "/health", "/costs", "/manage-blog"];
 const ADMIN_API_PREFIX = "/api/admin/";
 
 // Agency-only paths
@@ -24,7 +24,7 @@ function isPublicRoute(pathname: string): boolean {
 }
 
 function isAdminRoute(pathname: string): boolean {
-  if (ADMIN_PATHS.includes(pathname)) return true;
+  if (ADMIN_PATHS.some((p) => pathname === p || pathname.startsWith(p + "/"))) return true;
   if (pathname.startsWith(ADMIN_API_PREFIX)) return true;
   return false;
 }
@@ -154,6 +154,6 @@ function setRoleCookie(response: NextResponse, role: UserRole): void {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|sitemap\\.xml|robots\\.txt|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|sitemap\\.xml|robots\\.txt|indexnow-key\\.txt|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Users, Building2, Activity, DollarSign, CreditCard, LogOut } from "lucide-react";
+import { Users, Building2, Activity, DollarSign, CreditCard, FileText, LogOut } from "lucide-react";
 import { createBrowserClient } from "@supabase/ssr";
 
 const NAV_ITEMS = [
@@ -11,6 +11,7 @@ const NAV_ITEMS = [
   { label: "Subscriptions", href: "/subscriptions", icon: CreditCard },
   { label: "Health", href: "/health", icon: Activity },
   { label: "Costs", href: "/costs", icon: DollarSign },
+  { label: "Blog", href: "/manage-blog", icon: FileText },
 ];
 
 export function AdminSidebar() {

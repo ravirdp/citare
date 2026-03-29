@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { db } from "@/lib/db/client";
-import { clients } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { clients, blogPosts } from "@/lib/db/schema";
+import { eq, lte, and, desc } from "drizzle-orm";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://www.citare.ai";
@@ -19,6 +19,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   let presencePages: MetadataRoute.Sitemap = [];
+  let blogPages: MetadataRoute.Sitemap = [];
+
   try {
     const activeClients = await db
       .select({ slug: clients.slug })
@@ -45,9 +47,31 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.7,
       },
     ]);
+
+    const publishedPosts = await db
+      .select({
+        slug: blogPosts.slug,
+        updatedAt: blogPosts.updatedAt,
+        publishedAt: blogPosts.publishedAt,
+      })
+      .from(blogPosts)
+      .where(
+        and(
+          eq(blogPosts.status, "published"),
+          lte(blogPosts.publishedAt, new Date())
+        )
+      )
+      .orderBy(desc(blogPosts.publishedAt));
+
+    blogPages = publishedPosts.map((post) => ({
+      url: `${baseUrl}/blog/${post.slug}`,
+      lastModified: post.updatedAt || post.publishedAt || new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    }));
   } catch {
     // DB unavailable at build time — return static pages only
   }
 
-  return [...staticPages, ...presencePages];
+  return [...staticPages, ...presencePages, ...blogPages];
 }

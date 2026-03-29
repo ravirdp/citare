@@ -357,6 +357,27 @@ export const subscriptions = pgTable(
 );
 
 // ══════════════════════════════════════
+// BLOG
+// ══════════════════════════════════════
+
+export const blogPosts = pgTable("blog_posts", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  title: text("title").notNull(),
+  slug: text("slug").unique().notNull(),
+  excerpt: text("excerpt"),
+  content: text("content").notNull(),
+  author: text("author").default("Ravi Patel"),
+  publishedAt: timestamp("published_at", { withTimezone: true }),
+  status: text("status").default("draft"),
+  metaTitle: text("meta_title"),
+  metaDescription: text("meta_description"),
+  tags: text("tags").array().default([]),
+  readTimeMinutes: integer("read_time_minutes").default(5),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+});
+
+// ══════════════════════════════════════
 // FREE AUDIT
 // ══════════════════════════════════════
 

@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db/client";
 import { presenceDeployments, clients } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
+import { submitUrlsToIndexNow } from "@/lib/indexnow";
 
 /**
  * POST /api/presence/:clientId/deploy
@@ -96,10 +97,18 @@ export async function POST(
       deployed.push(deployment.format);
     }
 
+    // Submit deployed URLs to IndexNow for instant indexing
+    const deployedUrls = deployed.map((format) => {
+      const pathSegment = formatToPath[format] ?? format;
+      return `/presence/${client.slug}/${pathSegment}`;
+    });
+    const indexNowResult = await submitUrlsToIndexNow(deployedUrls);
+
     return NextResponse.json({
       success: true,
       deployed,
       slug: client.slug,
+      indexNow: indexNowResult,
     });
   } catch (err) {
     console.error("Presence deploy error:", err);

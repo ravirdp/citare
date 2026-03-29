@@ -73,6 +73,13 @@ export default function Home() {
               About
             </a>
             <a
+              href="/blog"
+              className="text-sm"
+              style={{ color: "var(--text-secondary)" }}
+            >
+              Blog
+            </a>
+            <a
               href="/contact"
               className="text-sm"
               style={{ color: "var(--text-secondary)" }}
