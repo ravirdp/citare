@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
-import { LayoutDashboard, Layers, Users, Activity, Lightbulb, TrendingUp, FileText, CreditCard, LogOut } from "lucide-react";
+import { LayoutDashboard, Layers, Users, Activity, Lightbulb, TrendingUp, FileText, CreditCard, Plug, LogOut } from "lucide-react";
 import { createBrowserClient } from "@supabase/ssr";
 import { ClientSelector } from "./client-selector";
 
@@ -27,6 +27,7 @@ const NAV_ITEMS = [
   { label: "Impact", href: "/impact", icon: TrendingUp },
   { label: "Reports", href: "/reports", icon: FileText },
   { label: "Billing", href: "/billing", icon: CreditCard },
+  { label: "Connections", href: "/connections", icon: Plug },
 ];
 
 export function Sidebar({ clients, clientAgencyMap }: SidebarProps) {

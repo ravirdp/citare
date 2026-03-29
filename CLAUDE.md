@@ -126,7 +126,7 @@ Agency users can only be created by super_admin via `POST /api/admin/agencies/[a
 
 ## Phases 0–4 — Foundation through Agency System (2026-03-22 to 2026-03-23)
 
-Supabase database (17 tables, RLS on all). Supabase Auth with cookie-based sessions. Login/signup pages. Super admin seeded (ravirdp@gmail.com). Google OAuth for data ingestion (4 integrations). 3 test businesses seeded (Clinique Bangalore, Leverage Edu, KR Packers Jaipur). Full knowledge graph type system with versioned CRUD. 5 presence generators with public routes at `/presence/:slug/*`. 5 monitoring platform adapters (all simulation mode). Dashboard UI (sidebar, client selector, 7 pages). Role-based middleware with cookie-cached roles. Agency system with branding injection. Super admin console (agencies, health, costs). shadcn/ui component library.
+Supabase database (17 tables, RLS on all). Supabase Auth with cookie-based sessions. Login/signup pages. Super admin seeded (ravirdp@gmail.com). Google OAuth for data ingestion (4 integrations). 3 test businesses seeded (Clinique Bangalore, Leverage Edu, KR Packers Jaipur). Full knowledge graph type system with versioned CRUD. 5 presence generators with public routes at `/presence/:slug/*`. 5 monitoring platform adapters (all simulation mode). Dashboard UI (sidebar, client selector, 8 pages including Connections). Role-based middleware with cookie-cached roles. Agency system with branding injection. Super admin console (agencies, health, costs). shadcn/ui component library.
 
 ## Phase 5 — Attribution, Recommendations, Reports & Feedback (2026-03-24)
 
@@ -154,8 +154,12 @@ Automated cycle with 48-hour cooldown. API: `POST /api/feedback/[clientId]/run`.
 ### SEO & GEO
 Open Graph + Twitter Card meta. JSON-LD schemas (Organization, WebSite with SearchAction). `robots.ts`, `sitemap.ts` (static + dynamic presence pages), `llms.txt` route.
 
-### Onboarding Integration OAuth
-`POST /api/integrations/google/[serviceId]/auth-url` — returns Google OAuth consent URL scoped per service (ads, gbp, search-console, analytics). Called by onboarding page. Requires auth + clientId.
+### Google Service Connections & Onboarding OAuth
+`POST /api/integrations/google/[serviceId]/auth-url` — returns Google OAuth consent URL scoped per service (ads, gbp, search-console, analytics). Accepts optional `{ returnTo }` in request body to control post-OAuth redirect (defaults to `/onboarding`). OAuth state encodes `clientId`, `serviceId`, and `returnTo` as JSON. Callback at `/api/auth/google/callback` parses state, creates only the specific data source for the authorized service, and redirects back to the originating page.
+
+**Onboarding** (`/onboarding`): Welcome flow for new users. Stays on page after each OAuth connection (shows green checkmarks). User leaves only via "Continue to Dashboard" or "Skip for now".
+
+**Connections** (`/connections`): Dashboard settings page for managing Google service connections anytime. Same OAuth flow as onboarding with `returnTo: "/connections"`. Shows connected/not-connected status. Disconnect button is visual-only (not yet implemented). API: `GET /api/connections/status` — returns data sources for the current user's client.
 
 ### Vercel Deployment
 Project: `ravirdp-1774s-projects/citare`. Auto-deploys on push to main. Domain: `www.citare.ai`. 11 env vars set (Supabase, Google OAuth, encryption, `AI_MODE=simulation`).

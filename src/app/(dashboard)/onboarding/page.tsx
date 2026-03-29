@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, useCallback } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 interface ServiceCard {
@@ -9,6 +9,7 @@ interface ServiceCard {
   name: string;
   description: string;
   icon: string;
+  sourceType: string; // maps to data_sources.source_type
 }
 
 const SERVICES: ServiceCard[] = [
@@ -17,31 +18,72 @@ const SERVICES: ServiceCard[] = [
     name: "Google Ads",
     description: "Import your campaigns, keywords, and performance data to analyze AI search overlap.",
     icon: "Ads",
+    sourceType: "google_ads",
   },
   {
     id: "gbp",
     name: "Google Business Profile",
     description: "Pull business info, reviews, and local signals for knowledge graph synthesis.",
     icon: "GBP",
+    sourceType: "gbp",
   },
   {
     id: "search-console",
     name: "Search Console",
     description: "Analyze organic search queries and pages to find AI visibility opportunities.",
     icon: "SC",
+    sourceType: "search_console",
   },
   {
     id: "analytics",
     name: "Google Analytics",
     description: "Track traffic patterns and correlate AI visibility with real business outcomes.",
     icon: "GA",
+    sourceType: "analytics",
   },
 ];
 
 export default function OnboardingPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [connected, setConnected] = useState<Set<string>>(new Set());
   const [authorizing, setAuthorizing] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch already-connected data sources for this client
+  const fetchConnectedServices = useCallback(async () => {
+    try {
+      const res = await fetch("/api/connections/status");
+      if (res.ok) {
+        const data = await res.json();
+        const connectedIds = new Set<string>();
+        for (const source of data.sources ?? []) {
+          // Map source_type back to service id
+          const service = SERVICES.find((s) => s.sourceType === source.sourceType);
+          if (service && (source.status === "connected" || source.status === "active")) {
+            connectedIds.add(service.id);
+          }
+        }
+        setConnected(connectedIds);
+      }
+    } catch {
+      // Silently fail — page still works, just won't show existing connections
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchConnectedServices();
+  }, [fetchConnectedServices]);
+
+  // If redirected back from OAuth with ?connected=serviceId, refetch
+  useEffect(() => {
+    const connectedParam = searchParams.get("connected");
+    if (connectedParam) {
+      fetchConnectedServices();
+    }
+  }, [searchParams, fetchConnectedServices]);
 
   async function handleAuthorize(serviceId: string) {
     setAuthorizing(serviceId);
@@ -118,6 +160,8 @@ export default function OnboardingPage() {
             gridTemplateColumns: "1fr 1fr",
             gap: 16,
             marginBottom: 40,
+            opacity: loading ? 0.6 : 1,
+            transition: "opacity 0.2s",
           }}
         >
           {SERVICES.map((service) => {
@@ -242,6 +286,15 @@ export default function OnboardingPage() {
           >
             Skip for now
           </Link>
+          <p
+            style={{
+              fontSize: "var(--text-xs)",
+              color: "var(--text-quaternary, var(--text-tertiary))",
+              marginTop: 8,
+            }}
+          >
+            You can always manage your connections later from the dashboard.
+          </p>
         </div>
       </div>
     </div>

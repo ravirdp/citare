@@ -14,13 +14,22 @@ const SERVICE_SCOPES: Record<string, string[]> = {
  * Returns a Google OAuth consent URL scoped to a specific service.
  */
 export async function POST(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ serviceId: string }> }
 ) {
   try {
     const user = await requireAuth();
 
     const { serviceId } = await params;
+
+    // Allow callers to specify where to redirect after OAuth completes
+    let returnTo = "/onboarding";
+    try {
+      const body = await request.json();
+      if (body.returnTo) returnTo = body.returnTo;
+    } catch {
+      // No body or invalid JSON — use default
+    }
 
     const scopes = SERVICE_SCOPES[serviceId];
     if (!scopes) {
@@ -44,11 +53,19 @@ export async function POST(
       process.env.GOOGLE_REDIRECT_URI
     );
 
+    // Encode clientId, serviceId, and return path in state
+    // so the callback knows which service was authorized and where to redirect
+    const state = JSON.stringify({
+      clientId,
+      serviceId,
+      returnTo,
+    });
+
     const url = oauth2Client.generateAuthUrl({
       access_type: "offline",
       prompt: "consent",
       scope: scopes,
-      state: `${clientId}:${serviceId}`,
+      state,
     });
 
     return NextResponse.json({ url });

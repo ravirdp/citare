@@ -5,45 +5,77 @@ import { dataSources } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
 import type { DataSourceType } from "@/types/database";
 
-const SOURCE_TYPES: DataSourceType[] = [
-  "google_ads",
-  "gbp",
-  "search_console",
-  "analytics",
-];
+/** Maps the serviceId used in the onboarding UI to the database source type */
+const SERVICE_TO_SOURCE_TYPE: Record<string, DataSourceType> = {
+  ads: "google_ads",
+  gbp: "gbp",
+  "search-console": "search_console",
+  analytics: "analytics",
+};
+
+const SYNC_FREQUENCY: Partial<Record<DataSourceType, number>> = {
+  google_ads: 6,
+  gbp: 12,
+  search_console: 24,
+  analytics: 24,
+};
 
 /**
  * GET /api/auth/google/callback
  * Handles the Google OAuth callback after user grants consent.
- * Creates data_source rows for each Google API.
+ * Creates the data_source row for the specific service that was authorized.
  */
 export async function GET(request: NextRequest) {
   const code = request.nextUrl.searchParams.get("code");
-  const state = request.nextUrl.searchParams.get("state"); // clientId
+  const stateRaw = request.nextUrl.searchParams.get("state");
   const error = request.nextUrl.searchParams.get("error");
 
+  // Parse state — supports new JSON format and legacy "clientId" / "clientId:serviceId" formats
+  let clientId: string | null = null;
+  let serviceId: string | null = null;
+  let returnTo = "/overview";
+
+  if (stateRaw) {
+    try {
+      const parsed = JSON.parse(stateRaw);
+      clientId = parsed.clientId ?? null;
+      serviceId = parsed.serviceId ?? null;
+      returnTo = parsed.returnTo ?? "/overview";
+    } catch {
+      // Legacy format: "clientId" or "clientId:serviceId"
+      const parts = stateRaw.split(":");
+      clientId = parts[0] ?? null;
+      serviceId = parts[1] ?? null;
+    }
+  }
+
   if (error) {
-    const url = new URL("/overview", request.url);
+    const url = new URL(returnTo, request.url);
     url.searchParams.set("error", `Google OAuth denied: ${error}`);
     return NextResponse.redirect(url);
   }
 
-  if (!code || !state) {
+  if (!code || !clientId) {
     return NextResponse.json(
       { error: "Missing code or state parameter" },
       { status: 400 }
     );
   }
 
-  const clientId = state;
-
   try {
-    // Exchange authorization code for tokens
     const tokens = await exchangeCode(code);
     const encryptedCredentials = encryptTokens(tokens);
 
-    // Create or update data_source rows for each Google API
-    for (const sourceType of SOURCE_TYPES) {
+    // Determine which source types to create
+    const sourceTypes: DataSourceType[] = [];
+    if (serviceId && SERVICE_TO_SOURCE_TYPE[serviceId]) {
+      sourceTypes.push(SERVICE_TO_SOURCE_TYPE[serviceId]);
+    } else {
+      // Legacy fallback: create all source types
+      sourceTypes.push("google_ads", "gbp", "search_console", "analytics");
+    }
+
+    for (const sourceType of sourceTypes) {
       const existing = await db
         .select()
         .from(dataSources)
@@ -69,19 +101,18 @@ export async function GET(request: NextRequest) {
           sourceType,
           status: "connected",
           credentials: encryptedCredentials,
-          syncFrequencyHours: sourceType === "google_ads" ? 6 :
-            sourceType === "gbp" ? 12 : 24,
+          syncFrequencyHours: SYNC_FREQUENCY[sourceType] ?? 24,
         });
       }
     }
 
-    // Redirect back to admin clients page
-    const url = new URL("/overview", request.url);
-    url.searchParams.set("success", "Google account connected");
+    // Redirect back to the page that initiated the OAuth flow
+    const url = new URL(returnTo, request.url);
+    url.searchParams.set("connected", serviceId ?? "all");
     return NextResponse.redirect(url);
   } catch (err) {
     console.error("Google OAuth callback error:", err);
-    const url = new URL("/overview", request.url);
+    const url = new URL(returnTo, request.url);
     url.searchParams.set(
       "error",
       "Failed to connect Google account. Please try again."
