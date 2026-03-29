@@ -6,7 +6,7 @@ import {
 import type { GoogleOAuthTokens, EncryptedCredentials } from "@/types/integrations";
 
 const SCOPES = [
-  "https://www.googleapis.com/auth/adwords.readonly",
+  "https://www.googleapis.com/auth/adwords",
   "https://www.googleapis.com/auth/business.manage",
   "https://www.googleapis.com/auth/webmasters.readonly",
   "https://www.googleapis.com/auth/analytics.readonly",

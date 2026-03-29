@@ -3,7 +3,7 @@ import { google } from "googleapis";
 import { requireAuth } from "@/lib/auth/user";
 
 const SERVICE_SCOPES: Record<string, string[]> = {
-  ads: ["https://www.googleapis.com/auth/adwords.readonly"],
+  ads: ["https://www.googleapis.com/auth/adwords"],
   gbp: ["https://www.googleapis.com/auth/business.manage"],
   "search-console": ["https://www.googleapis.com/auth/webmasters.readonly"],
   analytics: ["https://www.googleapis.com/auth/analytics.readonly"],

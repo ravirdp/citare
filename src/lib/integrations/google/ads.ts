@@ -7,7 +7,7 @@ export class GoogleAdsIntegration implements DataSourceIntegration {
   sourceType = "google_ads";
 
   getRequiredScopes(): string[] {
-    return ["https://www.googleapis.com/auth/adwords.readonly"];
+    return ["https://www.googleapis.com/auth/adwords"];
   }
 
   async validateCredentials(credentials: GoogleOAuthTokens): Promise<boolean> {
