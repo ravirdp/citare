@@ -128,7 +128,7 @@ export default function SelectPlanPage() {
                 style={{
                   background: "var(--bg-secondary)",
                   border: `1px solid ${highlight ? "var(--accent-primary)" : "var(--border-subtle)"}`,
-                  borderRadius: 12,
+                  borderRadius: "var(--radius-lg)",
                   padding: 24,
                   textAlign: "left",
                   position: "relative",

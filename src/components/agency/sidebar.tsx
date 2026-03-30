@@ -84,19 +84,21 @@ export function AgencySidebar({ agencyName, agencyLogoUrl }: AgencySidebarProps)
                 color: isActive
                   ? "var(--accent-primary)"
                   : "var(--text-secondary)",
-                background: isActive ? "var(--accent-muted)" : "transparent",
+                background: isActive ? "var(--accent-subtle)" : "transparent",
                 textDecoration: "none",
-                transition: "background 0.15s, color 0.15s",
+                transition: "background 200ms ease, color 200ms ease",
                 marginBottom: 2,
               }}
               onMouseEnter={(e) => {
                 if (!isActive) {
                   e.currentTarget.style.background = "var(--bg-hover)";
+                  e.currentTarget.style.color = "var(--text-primary)";
                 }
               }}
               onMouseLeave={(e) => {
                 if (!isActive) {
                   e.currentTarget.style.background = "transparent";
+                  e.currentTarget.style.color = "var(--text-secondary)";
                 }
               }}
             >

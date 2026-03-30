@@ -77,7 +77,24 @@ function ServicesContent() {
   return (
     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 16 }}>
       {data.map((item) => (
-        <div key={item.itemId} style={{ background: "var(--bg-secondary)", border: "1px solid var(--border-subtle)", borderRadius: 12, padding: 20 }}>
+        <div
+          key={item.itemId}
+          style={{
+            background: "var(--bg-secondary)",
+            border: "1px solid var(--border-subtle)",
+            borderRadius: "var(--radius-lg)",
+            padding: 20,
+            transition: "border-color 200ms ease, transform 200ms ease",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.borderColor = "var(--border-hover)";
+            e.currentTarget.style.transform = "scale(1.01)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.borderColor = "var(--border-subtle)";
+            e.currentTarget.style.transform = "scale(1)";
+          }}
+        >
           <div className="flex items-center justify-between" style={{ marginBottom: 12 }}>
             <span style={{ color: "var(--text-primary)", fontSize: "var(--text-md)", fontWeight: 600 }}>
               {item.itemName}

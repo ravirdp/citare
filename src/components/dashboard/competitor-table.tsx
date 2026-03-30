@@ -33,6 +33,7 @@ export function CompetitorTable({ competitors: rawCompetitors }: CompetitorTable
         <tr
           style={{
             borderBottom: "1px solid var(--border-subtle)",
+            background: "var(--bg-tertiary)",
           }}
         >
           {["Rank", "Name", "Mentions", "Avg Position"].map((header) => (
@@ -59,7 +60,8 @@ export function CompetitorTable({ competitors: rawCompetitors }: CompetitorTable
             key={comp.name}
             style={{
               background: "var(--bg-secondary)",
-              transition: "background 0.15s",
+              borderBottom: "1px solid var(--border-subtle)",
+              transition: "background 200ms ease",
             }}
             onMouseEnter={(e) =>
               (e.currentTarget.style.background = "var(--bg-hover)")

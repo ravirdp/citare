@@ -4,6 +4,8 @@ import { eq, lte, and } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { PublicNavbar } from "@/components/public/navbar";
+import { PublicFooter } from "@/components/public/footer";
+import { CtaCard } from "../_components/cta-card";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -104,7 +106,7 @@ export default async function BlogPostPage({ params }: Props) {
 
           {/* Header */}
           <h1
-            className="mt-6 text-4xl font-semibold tracking-tight leading-tight"
+            className="mt-6 font-semibold leading-tight"
             style={{ color: "var(--text-primary)" }}
           >
             {post.title}
@@ -155,54 +157,11 @@ export default async function BlogPostPage({ params }: Props) {
           />
 
           {/* CTA */}
-          <div
-            className="mt-16 rounded-xl p-8 text-center"
-            style={{
-              background: "var(--bg-secondary)",
-              border: "1px solid var(--border-subtle)",
-            }}
-          >
-            <h3
-              className="text-lg font-semibold"
-              style={{ color: "var(--text-primary)" }}
-            >
-              Want to check your AI visibility?
-            </h3>
-            <p className="mt-2 text-sm" style={{ color: "var(--text-tertiary)" }}>
-              Get a free, instant analysis of how AI search platforms see your business.
-            </p>
-            <a
-              href="/audit"
-              className="mt-4 inline-block rounded-lg px-8 py-3 text-sm font-medium"
-              style={{
-                background: "var(--accent-primary)",
-                color: "var(--bg-primary)",
-                textDecoration: "none",
-              }}
-            >
-              Try our free audit
-            </a>
-          </div>
+          <CtaCard />
         </article>
       </main>
 
-      {/* Footer */}
-      <footer
-        className="px-6 py-8"
-        style={{ borderTop: "1px solid var(--border-subtle)" }}
-      >
-        <div className="mx-auto flex max-w-[1200px] items-center justify-between">
-          <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>
-            &copy; 2026 Citare
-          </p>
-          <div className="flex items-center gap-6">
-            <a href="/audit" className="text-xs" style={{ color: "var(--text-tertiary)" }}>Free Audit</a>
-            <a href="/about" className="text-xs" style={{ color: "var(--text-tertiary)" }}>About</a>
-            <a href="/contact" className="text-xs" style={{ color: "var(--text-tertiary)" }}>Contact</a>
-            <a href="/privacy" className="text-xs" style={{ color: "var(--text-tertiary)" }}>Privacy</a>
-          </div>
-        </div>
-      </footer>
+      <PublicFooter />
 
       <style>{`
         .blog-content h1 { font-size: 2rem; font-weight: 700; margin-top: 2.5rem; margin-bottom: 1rem; color: var(--text-primary); }

@@ -110,7 +110,7 @@ export default async function AdminClientsPage() {
                 style={{
                   background: "var(--bg-secondary)",
                   border: "1px solid var(--border-subtle)",
-                  borderRadius: 12,
+                  borderRadius: "var(--radius-lg)",
                   padding: "20px 24px",
                 }}
               >

@@ -32,8 +32,18 @@ export function MetricCard({ label, value, trend, valueColor }: MetricCardProps)
       style={{
         background: "var(--bg-secondary)",
         border: "1px solid var(--border-subtle)",
-        borderRadius: 12,
+        borderRadius: "var(--radius-lg)",
         padding: "20px 24px",
+        transition: "border-color 200ms ease, transform 200ms ease",
+        cursor: "default",
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.borderColor = "var(--border-hover)";
+        e.currentTarget.style.transform = "scale(1.01)";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.borderColor = "var(--border-subtle)";
+        e.currentTarget.style.transform = "scale(1)";
       }}
     >
       <div

@@ -17,6 +17,15 @@ export function SignalCard({ signal, value, weight, available }: SignalCardProps
         background: "var(--bg-secondary)",
         borderColor: "var(--border-subtle)",
         opacity: available ? 1 : 0.5,
+        transition: "border-color 200ms ease, transform 200ms ease",
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.borderColor = "var(--border-hover)";
+        e.currentTarget.style.transform = "scale(1.01)";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.borderColor = "var(--border-subtle)";
+        e.currentTarget.style.transform = "scale(1)";
       }}
     >
       <CardContent className="p-4">

@@ -27,6 +27,7 @@ export default async function AgencyLayout({
           flex: 1,
           marginLeft: 240,
           padding: 24,
+          background: "var(--bg-primary)",
         }}
       >
         {children}

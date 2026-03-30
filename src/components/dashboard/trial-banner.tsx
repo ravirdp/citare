@@ -34,23 +34,24 @@ export function TrialBanner() {
     return (
       <div
         style={{
-          background: "var(--status-red)",
-          color: "#fff",
+          background: "rgba(239, 68, 68, 0.15)",
+          color: "var(--status-red)",
           padding: "10px 20px",
           fontSize: "var(--text-sm)",
           fontWeight: 500,
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          borderRadius: 8,
+          borderRadius: "var(--radius-md)",
           marginBottom: 16,
+          border: "1px solid rgba(239, 68, 68, 0.2)",
         }}
       >
         <span>Trial expired. Your monitoring is paused. Upgrade to resume.</span>
         <Link
           href={`/billing${queryString}`}
           style={{
-            color: "#fff",
+            color: "var(--status-red)",
             fontWeight: 600,
             textDecoration: "underline",
           }}
@@ -70,23 +71,24 @@ export function TrialBanner() {
     return (
       <div
         style={{
-          background: "var(--status-red)",
-          color: "#fff",
+          background: "rgba(239, 68, 68, 0.15)",
+          color: "var(--status-red)",
           padding: "10px 20px",
           fontSize: "var(--text-sm)",
           fontWeight: 500,
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          borderRadius: 8,
+          borderRadius: "var(--radius-md)",
           marginBottom: 16,
+          border: "1px solid rgba(239, 68, 68, 0.2)",
         }}
       >
         <span>Trial expires in {hoursLeft} hours. Upgrade now to keep your data.</span>
         <Link
           href={`/billing${queryString}`}
           style={{
-            color: "#fff",
+            color: "var(--status-red)",
             fontWeight: 600,
             textDecoration: "underline",
           }}
@@ -102,16 +104,17 @@ export function TrialBanner() {
     return (
       <div
         style={{
-          background: "#92400e",
-          color: "#fef3c7",
+          background: "rgba(234, 179, 8, 0.15)",
+          color: "var(--status-yellow)",
           padding: "10px 20px",
           fontSize: "var(--text-sm)",
           fontWeight: 500,
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          borderRadius: 8,
+          borderRadius: "var(--radius-md)",
           marginBottom: 16,
+          border: "1px solid rgba(234, 179, 8, 0.2)",
         }}
       >
         <span>
@@ -121,7 +124,7 @@ export function TrialBanner() {
         <Link
           href={`/billing${queryString}`}
           style={{
-            color: "#fef3c7",
+            color: "var(--status-yellow)",
             fontWeight: 600,
             textDecoration: "underline",
           }}

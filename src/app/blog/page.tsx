@@ -1,8 +1,9 @@
 import { db } from "@/lib/db/client";
 import { blogPosts } from "@/lib/db/schema";
 import { eq, lte, and, desc } from "drizzle-orm";
-import Link from "next/link";
 import { PublicNavbar } from "@/components/public/navbar";
+import { PublicFooter } from "@/components/public/footer";
+import { BlogCard } from "./_components/blog-card";
 
 export const dynamic = "force-dynamic";
 
@@ -48,8 +49,12 @@ export default async function BlogPage() {
       <main className="px-6 pt-32 pb-24">
         <div className="mx-auto max-w-[800px]">
           <h1
-            className="text-4xl font-semibold tracking-tight"
-            style={{ color: "var(--text-primary)" }}
+            className="font-semibold"
+            style={{
+              color: "var(--text-primary)",
+              fontSize: "clamp(32px, 4vw, 48px)",
+              letterSpacing: "-0.02em",
+            }}
           >
             Blog
           </h1>
@@ -60,59 +65,16 @@ export default async function BlogPage() {
           {posts.length > 0 ? (
             <div className="mt-12 flex flex-col gap-6">
               {posts.map((post) => (
-                <Link
+                <BlogCard
                   key={post.slug}
-                  href={`/blog/${post.slug}`}
-                  className="block rounded-xl p-6 transition-colors"
-                  style={{
-                    background: "var(--bg-secondary)",
-                    border: "1px solid var(--border-subtle)",
-                    textDecoration: "none",
-                  }}
-                >
-                  <div className="flex items-center gap-3 text-xs" style={{ color: "var(--text-tertiary)" }}>
-                    <span>{post.author}</span>
-                    <span>&middot;</span>
-                    <span>
-                      {post.publishedAt
-                        ? new Date(post.publishedAt).toLocaleDateString("en-IN", {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          })
-                        : ""}
-                    </span>
-                    <span>&middot;</span>
-                    <span>{post.readTimeMinutes} min read</span>
-                  </div>
-                  <h2
-                    className="mt-2 text-xl font-semibold"
-                    style={{ color: "var(--text-primary)" }}
-                  >
-                    {post.title}
-                  </h2>
-                  {post.excerpt && (
-                    <p className="mt-2 text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
-                      {post.excerpt}
-                    </p>
-                  )}
-                  {post.tags && post.tags.length > 0 && (
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      {post.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="rounded-full px-3 py-1 text-xs"
-                          style={{
-                            background: "var(--bg-tertiary)",
-                            color: "var(--text-tertiary)",
-                          }}
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </Link>
+                  slug={post.slug}
+                  author={post.author}
+                  publishedAt={post.publishedAt ? post.publishedAt.toISOString() : null}
+                  readTimeMinutes={post.readTimeMinutes}
+                  title={post.title}
+                  excerpt={post.excerpt}
+                  tags={post.tags}
+                />
               ))}
             </div>
           ) : (
@@ -141,23 +103,7 @@ export default async function BlogPage() {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer
-        className="px-6 py-8"
-        style={{ borderTop: "1px solid var(--border-subtle)" }}
-      >
-        <div className="mx-auto flex max-w-[1200px] items-center justify-between">
-          <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>
-            &copy; 2026 Citare
-          </p>
-          <div className="flex items-center gap-6">
-            <a href="/audit" className="text-xs" style={{ color: "var(--text-tertiary)" }}>Free Audit</a>
-            <a href="/about" className="text-xs" style={{ color: "var(--text-tertiary)" }}>About</a>
-            <a href="/contact" className="text-xs" style={{ color: "var(--text-tertiary)" }}>Contact</a>
-            <a href="/privacy" className="text-xs" style={{ color: "var(--text-tertiary)" }}>Privacy</a>
-          </div>
-        </div>
-      </footer>
+      <PublicFooter />
     </div>
   );
 }

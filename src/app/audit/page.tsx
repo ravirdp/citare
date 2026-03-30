@@ -16,6 +16,7 @@ function AuditForm() {
   const [contactCity, setContactCity] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [buttonHover, setButtonHover] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -54,7 +55,7 @@ function AuditForm() {
   const inputStyle = {
     width: "100%",
     padding: "10px 14px",
-    borderRadius: 8,
+    borderRadius: "var(--radius-md)",
     border: "1px solid var(--border-subtle)",
     background: "var(--bg-primary)",
     color: "var(--text-primary)",
@@ -112,7 +113,7 @@ function AuditForm() {
           style={{
             background: "var(--bg-secondary)",
             border: "1px solid var(--border-subtle)",
-            borderRadius: 12,
+            borderRadius: "var(--radius-lg)",
             padding: 32,
             textAlign: "left",
           }}
@@ -229,6 +230,8 @@ function AuditForm() {
           <button
             type="submit"
             disabled={loading}
+            onMouseEnter={() => setButtonHover(true)}
+            onMouseLeave={() => setButtonHover(false)}
             style={{
               width: "100%",
               padding: "12px 24px",
@@ -239,7 +242,9 @@ function AuditForm() {
               fontSize: "var(--text-sm)",
               fontWeight: 600,
               cursor: loading ? "not-allowed" : "pointer",
-              transition: "background 0.2s",
+              transition: "background 0.2s, box-shadow 0.2s, transform 0.2s",
+              boxShadow: !loading && buttonHover ? "0 0 20px var(--accent-glow)" : "none",
+              transform: !loading && buttonHover ? "translateY(-1px)" : "none",
             }}
           >
             {loading ? "Analyzing... (this may take 30-60 seconds)" : "Analyze My AI Visibility"}

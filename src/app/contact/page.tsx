@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { PublicNavbar } from "@/components/public/navbar";
+import { PublicFooter } from "@/components/public/footer";
 
 export default function ContactPage() {
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
@@ -70,8 +71,12 @@ export default function ContactPage() {
       <main className="px-6 pt-32 pb-24">
         <div className="mx-auto max-w-[900px]">
           <h1
-            className="text-4xl font-semibold tracking-tight"
-            style={{ color: "var(--text-primary)" }}
+            className="font-semibold"
+            style={{
+              color: "var(--text-primary)",
+              fontSize: "clamp(32px, 4vw, 48px)",
+              letterSpacing: "-0.02em",
+            }}
           >
             Contact Us
           </h1>
@@ -83,8 +88,8 @@ export default function ContactPage() {
                 <div>
                   <label
                     htmlFor="name"
-                    className="mb-2 block text-sm font-medium"
-                    style={{ color: "var(--text-secondary)" }}
+                    className="mb-2 block"
+                    style={{ fontSize: 14, fontWeight: 500, color: "var(--text-secondary)" }}
                   >
                     Name *
                   </label>
@@ -93,19 +98,20 @@ export default function ContactPage() {
                     name="name"
                     type="text"
                     required
-                    className="w-full rounded-lg px-4 py-3 text-sm outline-none"
+                    className="w-full px-4 py-3 text-sm outline-none"
                     style={{
                       background: "var(--bg-secondary)",
                       border: "1px solid var(--border-subtle)",
                       color: "var(--text-primary)",
+                      borderRadius: "var(--radius-md)",
                     }}
                   />
                 </div>
                 <div>
                   <label
                     htmlFor="email"
-                    className="mb-2 block text-sm font-medium"
-                    style={{ color: "var(--text-secondary)" }}
+                    className="mb-2 block"
+                    style={{ fontSize: 14, fontWeight: 500, color: "var(--text-secondary)" }}
                   >
                     Email *
                   </label>
@@ -114,11 +120,12 @@ export default function ContactPage() {
                     name="email"
                     type="email"
                     required
-                    className="w-full rounded-lg px-4 py-3 text-sm outline-none"
+                    className="w-full px-4 py-3 text-sm outline-none"
                     style={{
                       background: "var(--bg-secondary)",
                       border: "1px solid var(--border-subtle)",
                       color: "var(--text-primary)",
+                      borderRadius: "var(--radius-md)",
                     }}
                   />
                 </div>
@@ -127,8 +134,8 @@ export default function ContactPage() {
               <div>
                 <label
                   htmlFor="phone"
-                  className="mb-2 block text-sm font-medium"
-                  style={{ color: "var(--text-secondary)" }}
+                  className="mb-2 block"
+                  style={{ fontSize: 14, fontWeight: 500, color: "var(--text-secondary)" }}
                 >
                   Phone (optional)
                 </label>
@@ -136,11 +143,12 @@ export default function ContactPage() {
                   id="phone"
                   name="phone"
                   type="tel"
-                  className="w-full rounded-lg px-4 py-3 text-sm outline-none"
+                  className="w-full px-4 py-3 text-sm outline-none"
                   style={{
                     background: "var(--bg-secondary)",
                     border: "1px solid var(--border-subtle)",
                     color: "var(--text-primary)",
+                    borderRadius: "var(--radius-md)",
                   }}
                 />
               </div>
@@ -148,8 +156,8 @@ export default function ContactPage() {
               <div>
                 <label
                   htmlFor="message"
-                  className="mb-2 block text-sm font-medium"
-                  style={{ color: "var(--text-secondary)" }}
+                  className="mb-2 block"
+                  style={{ fontSize: 14, fontWeight: 500, color: "var(--text-secondary)" }}
                 >
                   Message *
                 </label>
@@ -158,11 +166,12 @@ export default function ContactPage() {
                   name="message"
                   required
                   rows={5}
-                  className="w-full resize-none rounded-lg px-4 py-3 text-sm outline-none"
+                  className="w-full resize-none px-4 py-3 text-sm outline-none"
                   style={{
                     background: "var(--bg-secondary)",
                     border: "1px solid var(--border-subtle)",
                     color: "var(--text-primary)",
+                    borderRadius: "var(--radius-md)",
                   }}
                 />
               </div>
@@ -170,10 +179,20 @@ export default function ContactPage() {
               <button
                 type="submit"
                 disabled={status === "submitting"}
-                className="rounded-lg px-8 py-3 text-sm font-medium disabled:opacity-50"
+                className="px-8 py-3 text-sm font-medium disabled:opacity-50"
                 style={{
                   background: "var(--accent-primary)",
                   color: "var(--bg-primary)",
+                  borderRadius: "var(--radius-md)",
+                  transition: "box-shadow 200ms ease, transform 200ms ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.boxShadow = "0 0 20px var(--accent-glow)";
+                  e.currentTarget.style.transform = "translateY(-1px)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.boxShadow = "none";
+                  e.currentTarget.style.transform = "translateY(0)";
                 }}
               >
                 {status === "submitting" ? "Sending..." : "Send Message"}
@@ -225,34 +244,7 @@ export default function ContactPage() {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer
-        className="px-6 py-8"
-        style={{ borderTop: "1px solid var(--border-subtle)" }}
-      >
-        <div className="mx-auto flex max-w-[1200px] items-center justify-between">
-          <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>
-            &copy; 2026 Citare
-          </p>
-          <div className="flex items-center gap-6">
-            <a href="/audit" className="text-xs" style={{ color: "var(--text-tertiary)" }}>
-              Free Audit
-            </a>
-            <a href="/about" className="text-xs" style={{ color: "var(--text-tertiary)" }}>
-              About
-            </a>
-            <a href="/contact" className="text-xs" style={{ color: "var(--text-tertiary)" }}>
-              Contact
-            </a>
-            <a href="/login" className="text-xs" style={{ color: "var(--text-tertiary)" }}>
-              Login
-            </a>
-            <a href="/privacy" className="text-xs" style={{ color: "var(--text-tertiary)" }}>
-              Privacy
-            </a>
-          </div>
-        </div>
-      </footer>
+      <PublicFooter />
     </div>
   );
 }

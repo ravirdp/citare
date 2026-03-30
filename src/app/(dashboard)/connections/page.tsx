@@ -155,9 +155,10 @@ export default function ConnectionsPage() {
               style={{
                 background: "var(--bg-secondary)",
                 border: `1px solid ${isConnected ? "var(--status-green)" : "var(--border-subtle)"}`,
-                borderRadius: 12,
+                borderRadius: "var(--radius-lg)",
                 padding: 24,
                 position: "relative",
+                transition: "border-color 200ms ease, transform 200ms ease",
               }}
             >
               {isConnected && (

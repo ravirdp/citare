@@ -174,10 +174,11 @@ export default function OnboardingPage() {
                 style={{
                   background: "var(--bg-secondary)",
                   border: `1px solid ${isConnected ? "var(--status-green)" : "var(--border-subtle)"}`,
-                  borderRadius: 12,
+                  borderRadius: "var(--radius-lg)",
                   padding: 24,
                   textAlign: "left",
                   position: "relative",
+                  transition: "border-color 200ms ease, transform 200ms ease",
                 }}
               >
                 {isConnected && (

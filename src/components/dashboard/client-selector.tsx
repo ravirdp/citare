@@ -59,18 +59,21 @@ export function ClientSelector({ clients }: ClientSelectorProps) {
       <SelectTrigger
         style={{
           width: "100%",
-          background: "var(--bg-tertiary)",
-          borderColor: "var(--border-default)",
+          background: "var(--bg-secondary)",
+          borderColor: "var(--border-subtle)",
           color: "var(--text-primary)",
           fontSize: "var(--text-sm)",
+          borderRadius: "var(--radius-md)",
+          transition: "border-color 200ms ease",
         }}
       >
         <SelectValue placeholder="Select client" />
       </SelectTrigger>
       <SelectContent
         style={{
-          background: "var(--bg-tertiary)",
-          borderColor: "var(--border-default)",
+          background: "var(--bg-secondary)",
+          borderColor: "var(--border-subtle)",
+          borderRadius: "var(--radius-md)",
         }}
       >
         {clients.map((client) => (

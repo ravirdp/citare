@@ -101,7 +101,7 @@ export default function BillingPage() {
           style={{
             background: "var(--bg-secondary)",
             border: "1px solid var(--border-subtle)",
-            borderRadius: 12,
+            borderRadius: "var(--radius-lg)",
             padding: 24,
             marginBottom: 32,
           }}
@@ -212,7 +212,7 @@ export default function BillingPage() {
           style={{
             background: "var(--bg-secondary)",
             border: "1px solid var(--border-subtle)",
-            borderRadius: 12,
+            borderRadius: "var(--radius-lg)",
             padding: 24,
             marginBottom: 32,
             color: "var(--text-tertiary)",
@@ -245,10 +245,23 @@ export default function BillingPage() {
               style={{
                 background: "var(--bg-secondary)",
                 border: `1px solid ${isCurrent ? "var(--accent-primary)" : "var(--border-subtle)"}`,
-                borderRadius: 12,
+                borderRadius: "var(--radius-lg)",
                 padding: 20,
                 display: "flex",
                 flexDirection: "column",
+                transition: "border-color 200ms ease, transform 200ms ease, box-shadow 200ms ease",
+              }}
+              onMouseEnter={(e) => {
+                if (!isCurrent) {
+                  e.currentTarget.style.borderColor = "var(--border-hover)";
+                  e.currentTarget.style.transform = "scale(1.01)";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isCurrent) {
+                  e.currentTarget.style.borderColor = "var(--border-subtle)";
+                  e.currentTarget.style.transform = "scale(1)";
+                }
               }}
             >
               <h3 style={{ fontSize: "var(--text-sm)", fontWeight: 600, color: "var(--text-primary)", marginBottom: 4 }}>

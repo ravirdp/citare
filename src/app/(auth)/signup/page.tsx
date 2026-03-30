@@ -249,6 +249,15 @@ function SignupForm() {
               background: "var(--accent-primary)",
               color: "var(--text-inverse)",
               fontSize: "var(--text-sm)",
+              transition: "box-shadow 200ms ease, transform 200ms ease",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.boxShadow = "0 0 20px var(--accent-glow)";
+              e.currentTarget.style.transform = "translateY(-1px)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.boxShadow = "none";
+              e.currentTarget.style.transform = "translateY(0)";
             }}
           >
             {loading ? "Creating account..." : "Create Account"}

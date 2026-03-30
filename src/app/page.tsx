@@ -1,4 +1,22 @@
 import { PublicNavbar } from "@/components/public/navbar";
+import { PublicFooter } from "@/components/public/footer";
+import { AnimatedSection } from "@/components/public/animated-section";
+import { CountUp } from "@/components/public/count-up";
+import { PremiumCard } from "@/components/ui/premium-card";
+import { GlowButton } from "@/components/public/glow-button";
+import { GlowSubmit } from "@/components/public/glow-submit";
+
+function HeroFadeIn({ children }: { children: React.ReactNode }) {
+  return (
+    <div
+      style={{
+        animation: "fadeInUp 600ms ease-out 200ms both",
+      }}
+    >
+      {children}
+    </div>
+  );
+}
 
 export default function Home() {
   const organizationSchema = {
@@ -42,89 +60,107 @@ export default function Home() {
       <PublicNavbar />
 
       {/* Hero */}
-      <section className="px-6 pt-40 pb-24">
-        <div className="mx-auto max-w-[1200px] text-center">
-          <p
-            className="mb-6 text-xs font-medium uppercase tracking-[0.2em]"
-            style={{ color: "var(--accent-primary)" }}
-          >
-            AI Search Intelligence
-          </p>
-          <h1
-            className="mx-auto max-w-[800px] text-5xl leading-[1.15] font-semibold tracking-tight"
-            style={{ color: "var(--text-primary)" }}
-          >
-            Are your customers finding you through AI?
-          </h1>
-          <p
-            className="mx-auto mt-6 max-w-[640px] text-xl leading-relaxed"
-            style={{ color: "var(--text-secondary)" }}
-          >
-            ChatGPT, Perplexity, and Google AI now answer questions your customers
-            used to search for. If you&apos;re not showing up in these answers,
-            your competitors are.
-          </p>
-          <div className="mt-10 flex items-center justify-center gap-4">
-            <a
-              href="/audit"
-              className="rounded-lg px-6 py-3 text-sm font-medium"
+      <section style={{ padding: "160px 24px 120px" }}>
+        <HeroFadeIn>
+          <div className="mx-auto max-w-[1200px] text-center">
+            <p
               style={{
-                background: "var(--accent-primary)",
-                color: "var(--bg-primary)",
+                marginBottom: 24,
+                fontSize: 13,
+                fontWeight: 500,
+                textTransform: "uppercase",
+                letterSpacing: "0.15em",
+                color: "var(--accent-primary)",
               }}
             >
-              Check Your AI Visibility
-            </a>
-            <a
-              href="#how-it-works"
-              className="rounded-lg px-6 py-3 text-sm font-medium"
+              AI Search Intelligence
+            </p>
+            <h1
+              className="mx-auto max-w-[800px]"
               style={{
-                border: "1px solid var(--border-subtle)",
+                fontSize: "clamp(36px, 5vw, 56px)",
+                lineHeight: 1.15,
+                fontWeight: 600,
+                letterSpacing: "-0.02em",
+                color: "var(--text-primary)",
+              }}
+            >
+              Are your customers finding you through AI?
+            </h1>
+            <p
+              className="mx-auto"
+              style={{
+                marginTop: 24,
+                maxWidth: 640,
+                fontSize: 20,
+                lineHeight: 1.65,
                 color: "var(--text-secondary)",
               }}
             >
-              See How It Works
-            </a>
+              ChatGPT, Perplexity, and Google AI now answer questions your customers
+              used to search for. If you&apos;re not showing up in these answers,
+              your competitors are.
+            </p>
+            <div className="mt-10 flex items-center justify-center gap-4">
+              <GlowButton href="/audit">Check Your AI Visibility</GlowButton>
+              <GlowButton href="#how-it-works" variant="ghost">See How It Works</GlowButton>
+            </div>
           </div>
-        </div>
+        </HeroFadeIn>
       </section>
 
       {/* The Shift — Stats */}
-      <section className="px-6 py-24">
-        <div className="mx-auto grid max-w-[1200px] grid-cols-1 gap-12 md:grid-cols-3">
-          {[
-            { stat: "527%", desc: "Growth in AI-referred traffic year over year" },
-            { stat: "4.4x", desc: "Higher conversion from AI search vs traditional" },
-            { stat: "50%", desc: "Of search traffic shifting to AI by 2028 — Gartner" },
-          ].map((item) => (
-            <div key={item.stat} className="text-center">
-              <p
-                className="text-5xl font-bold"
-                style={{ color: "var(--accent-primary)" }}
-              >
-                {item.stat}
-              </p>
-              <p
-                className="mt-3 text-sm leading-relaxed"
-                style={{ color: "var(--text-tertiary)" }}
-              >
-                {item.desc}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
+      <AnimatedSection>
+        <section style={{ padding: "100px 24px" }}>
+          <div className="mx-auto grid max-w-[1200px] grid-cols-1 gap-12 md:grid-cols-3">
+            {[
+              { stat: "527%", desc: "Growth in AI-referred traffic year over year" },
+              { stat: "4.4x", desc: "Higher conversion from AI search vs traditional" },
+              { stat: "50%", desc: "Of search traffic shifting to AI by 2028 — Gartner" },
+            ].map((item) => (
+              <div key={item.stat} className="text-center">
+                <CountUp
+                  value={item.stat}
+                  style={{
+                    fontSize: 64,
+                    fontWeight: 600,
+                    color: "var(--accent-primary)",
+                    display: "block",
+                  }}
+                />
+                <p
+                  style={{
+                    marginTop: 12,
+                    fontSize: 15,
+                    lineHeight: 1.6,
+                    color: "var(--text-tertiary)",
+                  }}
+                >
+                  {item.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+      </AnimatedSection>
 
       {/* How It Works */}
-      <section id="how-it-works" className="px-6 py-24">
+      <section id="how-it-works" style={{ padding: "100px 24px" }}>
         <div className="mx-auto max-w-[1200px]">
-          <h2
-            className="mb-16 text-center text-3xl font-semibold"
-            style={{ color: "var(--text-primary)" }}
-          >
-            How it works
-          </h2>
-          <div className="grid grid-cols-1 gap-12 md:grid-cols-3">
+          <AnimatedSection>
+            <h2
+              style={{
+                marginBottom: 64,
+                textAlign: "center",
+                fontSize: 40,
+                fontWeight: 600,
+                color: "var(--text-primary)",
+              }}
+            >
+              How it works
+            </h2>
+          </AnimatedSection>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
             {[
               {
                 step: "1",
@@ -141,44 +177,68 @@ export default function Home() {
                 title: "We track and improve continuously",
                 desc: "Daily monitoring across 5 AI platforms. You see exactly how AI describes your business and where you stand vs competitors.",
               },
-            ].map((item) => (
-              <div key={item.step}>
-                <div
-                  className="mb-4 flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold"
-                  style={{
-                    border: "1px solid var(--accent-primary)",
-                    color: "var(--accent-primary)",
-                  }}
-                >
-                  {item.step}
-                </div>
-                <h3
-                  className="mb-3 text-lg font-medium"
-                  style={{ color: "var(--text-primary)" }}
-                >
-                  {item.title}
-                </h3>
-                <p
-                  className="text-sm leading-relaxed"
-                  style={{ color: "var(--text-secondary)" }}
-                >
-                  {item.desc}
-                </p>
-              </div>
+            ].map((item, i) => (
+              <AnimatedSection key={item.step} delay={i * 100}>
+                <PremiumCard>
+                  <div
+                    style={{
+                      width: 32,
+                      height: 32,
+                      borderRadius: "50%",
+                      border: "1px solid var(--accent-primary)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: 14,
+                      fontWeight: 600,
+                      color: "var(--accent-primary)",
+                      marginBottom: 16,
+                    }}
+                  >
+                    {item.step}
+                  </div>
+                  <h3
+                    style={{
+                      fontSize: 20,
+                      fontWeight: 600,
+                      color: "var(--text-primary)",
+                      marginBottom: 12,
+                    }}
+                  >
+                    {item.title}
+                  </h3>
+                  <p
+                    style={{
+                      fontSize: 16,
+                      lineHeight: 1.65,
+                      color: "var(--text-secondary)",
+                    }}
+                  >
+                    {item.desc}
+                  </p>
+                </PremiumCard>
+              </AnimatedSection>
             ))}
           </div>
         </div>
       </section>
 
       {/* What You Get */}
-      <section className="px-6 py-24">
+      <section style={{ padding: "100px 24px" }}>
         <div className="mx-auto max-w-[1200px]">
-          <h2
-            className="mb-16 text-center text-3xl font-semibold"
-            style={{ color: "var(--text-primary)" }}
-          >
-            What you get
-          </h2>
+          <AnimatedSection>
+            <h2
+              style={{
+                marginBottom: 64,
+                textAlign: "center",
+                fontSize: 40,
+                fontWeight: 600,
+                color: "var(--text-primary)",
+              }}
+            >
+              What you get
+            </h2>
+          </AnimatedSection>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             {[
               {
@@ -197,28 +257,30 @@ export default function Home() {
                 title: "ROI You Can Measure",
                 desc: "We calculate the equivalent ad spend value of your AI visibility. Know exactly what your presence is worth in rupees.",
               },
-            ].map((card) => (
-              <div
-                key={card.title}
-                className="rounded-lg p-8"
-                style={{
-                  background: "var(--bg-secondary)",
-                  border: "1px solid var(--border-subtle)",
-                }}
-              >
-                <h3
-                  className="mb-3 text-lg font-medium"
-                  style={{ color: "var(--text-primary)" }}
-                >
-                  {card.title}
-                </h3>
-                <p
-                  className="text-sm leading-relaxed"
-                  style={{ color: "var(--text-secondary)" }}
-                >
-                  {card.desc}
-                </p>
-              </div>
+            ].map((card, i) => (
+              <AnimatedSection key={card.title} delay={i * 100}>
+                <PremiumCard>
+                  <h3
+                    style={{
+                      fontSize: 20,
+                      fontWeight: 600,
+                      color: "var(--text-primary)",
+                      marginBottom: 12,
+                    }}
+                  >
+                    {card.title}
+                  </h3>
+                  <p
+                    style={{
+                      fontSize: 15,
+                      lineHeight: 1.65,
+                      color: "var(--text-secondary)",
+                    }}
+                  >
+                    {card.desc}
+                  </p>
+                </PremiumCard>
+              </AnimatedSection>
             ))}
           </div>
         </div>
@@ -226,126 +288,93 @@ export default function Home() {
 
       {/* Free Audit CTA */}
       <section
-        className="px-6 py-24"
-        style={{ background: "var(--bg-secondary)" }}
+        style={{
+          padding: "120px 24px",
+          background: "var(--bg-secondary)",
+          borderTop: "1px solid var(--border-subtle)",
+          borderBottom: "1px solid var(--border-subtle)",
+        }}
       >
-        <div className="mx-auto max-w-[1200px] text-center">
-          <h2
-            className="text-3xl font-semibold"
-            style={{ color: "var(--text-primary)" }}
-          >
-            See where you stand in 60 seconds
-          </h2>
-          <p
-            className="mx-auto mt-4 max-w-[520px] text-base leading-relaxed"
-            style={{ color: "var(--text-secondary)" }}
-          >
-            Enter your website URL. No login. No credit card. Get your AI Search
-            Visibility Report instantly.
-          </p>
-          <form
-            action="/audit"
-            method="GET"
-            className="mx-auto mt-8 max-w-[600px]"
-          >
-            <div className="flex gap-3">
-              <input
-                type="url"
-                name="url"
-                placeholder="https://yourwebsite.com"
-                required
-                className="flex-1 rounded-lg px-4 py-3 text-sm outline-none"
-                style={{
-                  background: "var(--bg-primary)",
-                  border: "1px solid var(--border-subtle)",
-                  color: "var(--text-primary)",
-                }}
-              />
-              <input
-                type="text"
-                name="businessName"
-                placeholder="Business name"
-                required
-                className="w-[180px] rounded-lg px-4 py-3 text-sm outline-none"
-                style={{
-                  background: "var(--bg-primary)",
-                  border: "1px solid var(--border-subtle)",
-                  color: "var(--text-primary)",
-                }}
-              />
-              <button
-                type="submit"
-                className="rounded-lg px-6 py-3 text-sm font-medium"
-                style={{
-                  background: "var(--accent-primary)",
-                  color: "var(--bg-primary)",
-                }}
-              >
-                Analyze
-              </button>
-            </div>
-          </form>
-          <p
-            className="mt-6 text-xs"
-            style={{ color: "var(--text-tertiary)" }}
-          >
-            Trusted by businesses across healthcare, education, e-commerce, and
-            professional services
-          </p>
-        </div>
+        <AnimatedSection>
+          <div className="mx-auto max-w-[1200px] text-center">
+            <h2
+              style={{
+                fontSize: 40,
+                fontWeight: 600,
+                color: "var(--text-primary)",
+              }}
+            >
+              See where you stand in 60 seconds
+            </h2>
+            <p
+              className="mx-auto"
+              style={{
+                marginTop: 16,
+                maxWidth: 520,
+                fontSize: 18,
+                lineHeight: 1.6,
+                color: "var(--text-secondary)",
+              }}
+            >
+              Enter your website URL. No login. No credit card. Get your AI Search
+              Visibility Report instantly.
+            </p>
+            <form
+              action="/audit"
+              method="GET"
+              className="mx-auto mt-8 max-w-[600px]"
+            >
+              <div className="flex gap-3">
+                <input
+                  type="url"
+                  name="url"
+                  placeholder="https://yourwebsite.com"
+                  required
+                  className="flex-1"
+                  style={{
+                    borderRadius: "var(--radius-md)",
+                    padding: "14px 16px",
+                    fontSize: 14,
+                    background: "var(--bg-primary)",
+                    border: "1px solid var(--border-subtle)",
+                    color: "var(--text-primary)",
+                    outline: "none",
+                  }}
+                />
+                <input
+                  type="text"
+                  name="businessName"
+                  placeholder="Business name"
+                  required
+                  style={{
+                    width: 180,
+                    borderRadius: "var(--radius-md)",
+                    padding: "14px 16px",
+                    fontSize: 14,
+                    background: "var(--bg-primary)",
+                    border: "1px solid var(--border-subtle)",
+                    color: "var(--text-primary)",
+                    outline: "none",
+                  }}
+                />
+                <GlowSubmit>Analyze</GlowSubmit>
+              </div>
+            </form>
+            <p
+              style={{
+                marginTop: 24,
+                fontSize: "var(--text-xs)",
+                color: "var(--text-tertiary)",
+              }}
+            >
+              Trusted by businesses across healthcare, education, e-commerce, and
+              professional services
+            </p>
+          </div>
+        </AnimatedSection>
       </section>
 
-      {/* Footer */}
-      <footer
-        className="px-6 py-8"
-        style={{ borderTop: "1px solid var(--border-subtle)" }}
-      >
-        <div className="mx-auto flex max-w-[1200px] items-center justify-between">
-          <p
-            className="text-xs"
-            style={{ color: "var(--text-tertiary)" }}
-          >
-            &copy; 2026 Citare
-          </p>
-          <div className="flex items-center gap-6">
-            <a
-              href="/audit"
-              className="text-xs"
-              style={{ color: "var(--text-tertiary)" }}
-            >
-              Free Audit
-            </a>
-            <a
-              href="/about"
-              className="text-xs"
-              style={{ color: "var(--text-tertiary)" }}
-            >
-              About
-            </a>
-            <a
-              href="/contact"
-              className="text-xs"
-              style={{ color: "var(--text-tertiary)" }}
-            >
-              Contact
-            </a>
-            <a
-              href="/login"
-              className="text-xs"
-              style={{ color: "var(--text-tertiary)" }}
-            >
-              Login
-            </a>
-            <a
-              href="/privacy"
-              className="text-xs"
-              style={{ color: "var(--text-tertiary)" }}
-            >
-              Privacy
-            </a>
-          </div>
-        </div>
-      </footer>
+      <PublicFooter />
     </div>
   );
 }

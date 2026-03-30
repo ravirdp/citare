@@ -121,7 +121,7 @@ function OverviewContent() {
         style={{
           background: "var(--bg-secondary)",
           border: "1px solid var(--border-subtle)",
-          borderRadius: 12,
+          borderRadius: "var(--radius-lg)",
           padding: 40,
           textAlign: "center",
           color: "var(--text-tertiary)",
@@ -147,7 +147,7 @@ function OverviewContent() {
           style={{
             background: "var(--bg-secondary)",
             border: "1px solid var(--border-subtle)",
-            borderRadius: 12,
+            borderRadius: "var(--radius-lg)",
             padding: 20,
             display: "flex",
             justifyContent: "center",
@@ -212,7 +212,7 @@ function OverviewContent() {
           style={{
             background: "var(--bg-secondary)",
             border: "1px solid var(--border-subtle)",
-            borderRadius: 12,
+            borderRadius: "var(--radius-lg)",
             padding: 24,
           }}
         >
@@ -232,7 +232,7 @@ function OverviewContent() {
           style={{
             background: "var(--bg-secondary)",
             border: "1px solid var(--border-subtle)",
-            borderRadius: 12,
+            borderRadius: "var(--radius-lg)",
             padding: 24,
           }}
         >
@@ -255,7 +255,7 @@ function OverviewContent() {
         style={{
           background: "var(--bg-secondary)",
           border: "1px solid var(--border-subtle)",
-          borderRadius: 12,
+          borderRadius: "var(--radius-lg)",
           padding: 24,
         }}
       >
