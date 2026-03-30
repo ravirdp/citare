@@ -6,7 +6,7 @@ import type { Platform, NormalizedResult, CompetitorMention } from "@/types/moni
  */
 export interface PlatformAdapter {
   platform: Platform;
-  queryPlatform(query: string, clientName: string): Promise<NormalizedResult>;
+  queryPlatform(query: string, clientName: string, competitorNames?: string[]): Promise<NormalizedResult>;
   isAvailable(): boolean;
 }
 

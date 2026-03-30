@@ -1,5 +1,5 @@
 import { db } from "@/lib/db/client";
-import { monitoringQueries, monitoringResults, clients } from "@/lib/db/schema";
+import { monitoringQueries, monitoringResults, clients, knowledgeGraphs } from "@/lib/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { getActivePlatforms } from "./platforms";
 import { getSubscriptionForClient } from "@/lib/billing/guards";
@@ -59,6 +59,28 @@ export async function runMonitoringForClient(
   const bp = (client.metadata as Record<string, unknown>) ?? {};
   const clientName = client.name ?? (bp as { name?: string }).name ?? "";
 
+  // Load competitor names from knowledge graph for mention detection
+  let competitorNames: string[] = [];
+  try {
+    const [kg] = await db
+      .select()
+      .from(knowledgeGraphs)
+      .where(eq(knowledgeGraphs.clientId, clientId))
+      .orderBy(desc(knowledgeGraphs.version))
+      .limit(1);
+
+    if (kg?.competitors) {
+      const competitors = kg.competitors as Array<{ name?: string }> | undefined;
+      if (Array.isArray(competitors)) {
+        competitorNames = competitors
+          .map((c) => c.name)
+          .filter((n): n is string => !!n);
+      }
+    }
+  } catch {
+    // KG unavailable — proceed without competitor names
+  }
+
   // Load active queries
   const queries = await db
     .select()
@@ -83,7 +105,7 @@ export async function runMonitoringForClient(
     // All queries for this platform in parallel with error isolation
     const results = await Promise.allSettled(
       activeQueries.map(async (query) => {
-        const result = await adapter.queryPlatform(query.queryText, clientName);
+        const result = await adapter.queryPlatform(query.queryText, clientName, competitorNames);
 
         await db.insert(monitoringResults).values({
           clientId,
