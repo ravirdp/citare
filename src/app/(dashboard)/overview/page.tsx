@@ -36,6 +36,113 @@ function formatIndianNumber(num: number | null | undefined): string {
   return lastThree;
 }
 
+interface KGSummary {
+  servicesCount: number;
+  productsCount: number;
+  competitorsCount: number;
+}
+
+function OverviewGettingStarted({ clientId }: { clientId: string }) {
+  const { data: kgSummary } = useQuery<KGSummary>({
+    queryKey: ["kg-summary", clientId],
+    queryFn: async () => {
+      const res = await fetch(`/api/kg/${clientId}`);
+      if (!res.ok) return { servicesCount: 0, productsCount: 0, competitorsCount: 0 };
+      const json = await res.json();
+      return {
+        servicesCount: Array.isArray(json.services) ? json.services.length : 0,
+        productsCount: Array.isArray(json.products) ? json.products.length : 0,
+        competitorsCount: Array.isArray(json.competitors) ? json.competitors.length : 0,
+      };
+    },
+    enabled: !!clientId,
+  });
+
+  const { data: connectionsData } = useQuery<{ sources: Array<{ sourceType: string; status: string }> }>({
+    queryKey: ["connections-status", clientId],
+    queryFn: async () => {
+      const res = await fetch("/api/connections/status");
+      if (!res.ok) return { sources: [] };
+      return res.json();
+    },
+    enabled: !!clientId,
+  });
+
+  const connectedSources = connectionsData?.sources?.filter((s) => s.status === "active")?.length ?? 0;
+  const hasKg = kgSummary && (kgSummary.servicesCount > 0 || kgSummary.competitorsCount > 0);
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <div style={{
+        background: "var(--bg-tertiary, var(--bg-secondary))",
+        border: "1px solid var(--accent-primary)",
+        borderRadius: "var(--radius-lg)",
+        padding: "12px 16px",
+        color: "var(--text-secondary)",
+        fontSize: "var(--text-sm)",
+      }}>
+        {hasKg
+          ? "Your knowledge graph is ready. Run monitoring to start tracking AI visibility."
+          : "No data yet. Connect data sources and run monitoring to see results."}
+      </div>
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+        gap: 16,
+      }}>
+        <div style={{
+          background: "var(--bg-secondary)",
+          border: "1px solid var(--border-subtle)",
+          borderRadius: "var(--radius-lg)",
+          padding: 20,
+          textAlign: "center",
+        }}>
+          <div style={{ color: "var(--text-tertiary)", fontSize: "var(--text-xs)", marginBottom: 4 }}>Services</div>
+          <div style={{ color: "var(--text-primary)", fontSize: 24, fontWeight: 700 }}>
+            {kgSummary?.servicesCount ?? 0}
+          </div>
+        </div>
+        <div style={{
+          background: "var(--bg-secondary)",
+          border: "1px solid var(--border-subtle)",
+          borderRadius: "var(--radius-lg)",
+          padding: 20,
+          textAlign: "center",
+        }}>
+          <div style={{ color: "var(--text-tertiary)", fontSize: "var(--text-xs)", marginBottom: 4 }}>Products</div>
+          <div style={{ color: "var(--text-primary)", fontSize: 24, fontWeight: 700 }}>
+            {kgSummary?.productsCount ?? 0}
+          </div>
+        </div>
+        <div style={{
+          background: "var(--bg-secondary)",
+          border: "1px solid var(--border-subtle)",
+          borderRadius: "var(--radius-lg)",
+          padding: 20,
+          textAlign: "center",
+        }}>
+          <div style={{ color: "var(--text-tertiary)", fontSize: "var(--text-xs)", marginBottom: 4 }}>Competitors</div>
+          <div style={{ color: "var(--text-primary)", fontSize: 24, fontWeight: 700 }}>
+            {kgSummary?.competitorsCount ?? 0}
+          </div>
+        </div>
+        <div style={{
+          background: "var(--bg-secondary)",
+          border: "1px solid var(--border-subtle)",
+          borderRadius: "var(--radius-lg)",
+          padding: 20,
+          textAlign: "center",
+        }}>
+          <div style={{ color: "var(--text-tertiary)", fontSize: "var(--text-xs)", marginBottom: 4 }}>Data Sources</div>
+          <div style={{ color: "var(--text-primary)", fontSize: 24, fontWeight: 700 }}>
+            {connectedSources}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function OverviewContent() {
   const clientId = useClientId();
 
@@ -116,21 +223,7 @@ function OverviewContent() {
       (data.aiSearchValueInr ?? 0) === 0);
 
   if (isEmpty) {
-    return (
-      <div
-        style={{
-          background: "var(--bg-secondary)",
-          border: "1px solid var(--border-subtle)",
-          borderRadius: "var(--radius-lg)",
-          padding: 40,
-          textAlign: "center",
-          color: "var(--text-tertiary)",
-          fontSize: "var(--text-sm)",
-        }}
-      >
-        No data yet. Connect data sources and run monitoring to see results.
-      </div>
-    );
+    return <OverviewGettingStarted clientId={clientId} />;
   }
 
   return (
